@@ -1,0 +1,19 @@
+{
+  "name": "l-systems-3d",
+  "version": "1.0.0",
+  "description": "L-systems in 3D",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "l-system",
+    "3d",
+    "threejs"
+  ],
+  "author": "axyorah",
+  "license": "MIT",
+  "dependencies": {
+    "three": "^0.128.0"
+  }
+}
