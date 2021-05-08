@@ -1,44 +1,41 @@
-class Branch {
+class Brancher {
     constructor() {
-        this._fwd = new THREE.Vector3(0,1,0);
-        this._top = new THREE.Vector3(0,0,1);
-        this._side = new THREE.Vector3(1,0,0);
-
         this._len = 1.;
         this._wid = 0.1;
 
-        this.obj;
-        this.mat;
-        this.geo;
-        this.mesh;
+        this.mat;  // branch material
+        this.geo;  // branch geometry
+        this.mesh; // actual branch mesh (geo + mat)
+        this.axes; // axes that show branch orientation (needed for aligning the object to vectors)
+        this.obj;  // mesh + axes (use this to rescale/reposition/reorient)
     }
 
     get len() { return this._len; }
     get wid() { return this._wid; }
 
-    get fwd() { return this._fwd; }
-    get top() { return this._top; }
-    get side() { return this._side; }
-
-    set fwd( val ) { 
-        if ( !(val instanceof(THREE.Vector3)) ) {
-            throw new TypeError(`Argument for 'Branch.fwd' setter must be of type THREE.Vector3, got ${val}`);            
-        } 
-        this._fwd = val;
+    // axes getter: (ax.position - mesh.position) normalized
+    get fwd() {
+        // get branch's 'fwd' axis (THREE.Vector3) in World coordinates
+        // (corresponds to unit-vector in positive y-axis at default branch orientation)
+        let fwdPos = new THREE.Vector3();
+        this.axes.children[0].getWorldPosition(fwdPos);
+        return fwdPos.add( this.mesh.position.clone().multiplyScalar( -1 ) ).normalize();
     }
 
-    set top( val ) {        
-        if ( !(val instanceof(THREE.Vector3)) ) {
-            throw new TypeError(`Argument for 'Branch.top' setter must be of type THREE.Vector3, got ${val}`);
-        } 
-        this._top = val;
+    get top() {
+        // get branch's 'top' axis (THREE.Vector3) in World coordinates
+        // (corresponds to unit-vector in positive z-axis at default branch orientation)
+        let topPos = new THREE.Vector3();
+        this.axes.children[1].getWorldPosition(topPos);
+        return topPos.add( this.mesh.position.clone().multiplyScalar( -1 ) ).normalize();
     }
 
-    set side( val ) {
-        if ( !(val instanceof(THREE.Vector3)) ) {
-            throw new TypeError(`Argument for 'Branch.side' setter must be of type THREE.Vector3, got ${val}`);        
-        } 
-        this._side = val;
+    get side() {
+        // get branch's 'side' axis (THREE.Vector3) in World coordinates
+        // (corresponds to unit-vector in positive x-axis at default branch orientation)
+        let sidePos = new THREE.Vector3();
+        this.axes.children[2].getWorldPosition(sidePos);
+        return sidePos.add( this.mesh.position.clone().multiplyScalar( -1 ) ).normalize();
     }
 
     makeAxes( visible=false ) {
@@ -66,12 +63,14 @@ class Branch {
         axes.add(fwdMesh);
         axes.add(topMesh);
         axes.add(sideMesh);
+        axes.name = 'axes';
         axes.visible = visible;
 
         return axes;
     }
 
-    make( visibleAxes=false ) {
+    makeBranch( visibleAxes=false ) {
+        // create branch object (THREE.Object3D) containing branch mesh (THREE.Mesh) 
         this.obj = new THREE.Object3D();
 
         this.mat = new THREE.MeshPhongMaterial( { color: 0xFFAA00, shininess: 20, opacity: 1., transparent: false } );
@@ -82,26 +81,27 @@ class Branch {
         this.mesh.position.set(0, this.len/2, 0);
         this.mesh.castShadow = true;
 
-        const axes = this.makeAxes( visibleAxes );
+        this.axes = this.makeAxes( visibleAxes );
 
         this.obj.add(this.mesh);
-        this.obj.add(axes);
+        this.obj.add(this.axes);
         return this.obj;
     }
 
     moveTo( position ) {
+        // move branch to a specified position (THREE.Vector3)
         if ( !(position instanceof( THREE.Vector3 )) ) {
             throw new TypeError(`Argument of 'Branch.moveTo' should be of type 'THREE.Vector3' but got ${position}`);
         }
-        this.obj.position.set( position );
+        this.obj.position.set( position.x, position.y, position.z );
     }
 
-    align( fwd, top, side ) {
-        if ( !(fwd instanceof(THREE.Vector3)) || !(top instanceof(THREE.Vector3) || !(side instanceof THREE.Vector3)) ) {
-            throw TypeError(`All arguments for 'Branch.align' should be of type THREE.Vector3, got ${fwd}, ${top}, ${side}`)
+    orient( quaternion ) {
+        // orient branch as specified by the quaternion (THREE.Quaternion);
+        if ( !(quaternion instanceof( THREE.Quaternion )) ) {
+            throw TypeError(`Argument for 'Turtle.orion' should be of type 'THREE.Quaternion' but got ${quaternion}`);
         }
-        this.obj.quaternion.setFromUnitVectors(this._fwd, fwd)
-
+        this.obj.setRotationFromQuaternion( quaternion );
     }
 }
 
@@ -112,16 +112,16 @@ class LSystem {
         this._branchLen = 1;
         this._branchWid = 0.1;
 
-        this._angleYaw = 15;   // - +
-        this._anglePitch = 25; // ^ v
+        this._angleYaw = 25;   // - +
+        this._anglePitch = 35; // ^ v
         this._angleRoll = 35;  // d b
 
         this._axiom = '[X]';
+        this._steps = 0;
         this._states = [this.axiom];
-        this._object = new THREE.Object3D();
         this._rules = {
-            'X': 'F[+X]bF[+X]bF[+X]b',
-            'F': 'FbF',
+            'X': '[^FF+X]b[^F+X]bv',
+            'F': 'Fb+F[X]',
             '[': '[',
             ']': ']',
             '+': '+',
@@ -132,8 +132,7 @@ class LSystem {
             'b': 'b'
         };
 
-        this._branchMaterial = this.getBranchMaterial();
-        this._branch = this.makeBranch();
+        this.obj = new THREE.Object3D();
     }
 
     get axiom() { return this._axiom; }
@@ -144,7 +143,6 @@ class LSystem {
     get anglePitch() { return this._anglePitch; }
     get angleRoll() { return this._angleRoll; }
     get rules() { return this._rules; }
-    get branch() { return this._branch; }
 
     set branchLen( val ) { this._branchLen = val; }
     set branchWid( val ) { this._branchWid = val; }
@@ -175,55 +173,49 @@ class LSystem {
     }
 
     draw() {
-        let branch, leaf;
+        let branch, leaf; // TODO: leaf
 
         let pos_stack = [];
-        let fwd_stack = [];
-        let up_stack = [];
-        let right_stack = [];
+        let quaternion_stack = [];
+        let yaw_stack = [];
+        let pitch_stack = [];
+        let roll_stack = [];
 
         const obj = new THREE.Object3D();
         for (let sym of this.states[this.states.length-1]) {
             if (sym === 'F') { 
-                const brancher = new Branch();
-                brancher.make( true );
+                const brancher = new Brancher();
+                brancher.makeBranch();
                 branch = brancher.obj;
-                //branch.position.set( this.turtle.position );
-                //branch.quaternion.setFromUnitVectors( new THREE.Vector3(0,1,0), this.turtle.fwd ); // aligned with fwd, but roll around fwd is missing...
-                brancher.moveTo( turtle.position );
-                brancher.align( turtle.fwd, turtle.top, turtle.side );
-                obj.add( branch ); // Too Soon?..
-                this.turtle.move( this.branchLen );
+                brancher.moveTo( this.turtle.position );
+                brancher.orient( this.turtle.obj.quaternion ); 
+                obj.add( branch );
+                this.turtle.forward( this.branchLen );
             }
-            else if (sym === '+') this.turtle.yaw( this.angleYaw )
-            else if (sym === '-') this.turtle.yaw(-this.angleYaw )
-            else if (sym === '^') this.turtle.pitch( this.anglePitch )
-            else if (sym === 'v') this.turtle.pitch(-this.anglePitch )
-            else if (sym === 'd') this.turtle.roll( this.angleRoll )
-            else if (sym === 'b') this.turtle.roll(-this.angleRoll )
+            else if (sym === '+') this.turtle.yawBy( this.angleYaw * Math.PI / 180 )
+            else if (sym === '-') this.turtle.yawBy(-this.angleYaw * Math.PI / 180 )
+            else if (sym === '^') this.turtle.pitchBy( this.anglePitch * Math.PI / 180 )
+            else if (sym === 'v') this.turtle.pitchBy(-this.anglePitch * Math.PI / 180 )
+            else if (sym === 'd') this.turtle.rollBy( this.angleRoll * Math.PI / 180 )
+            else if (sym === 'b') this.turtle.rollBy(-this.angleRoll * Math.PI / 180 )
             else if (sym === '[') {
                 pos_stack.push( this.turtle.position );
-                fwd_stack.push( this.turtle.fwd );
-                up_stack.push( this.turtle.up );
-                right_stack.push( this.turtle.right );
+                quaternion_stack.push( this.turtle.obj.quaternion.clone() );
+                yaw_stack.push( this.turtle.yaw );
+                pitch_stack.push( this.turtle.pitch );
+                roll_stack.push( this.turtle.roll );
             }
             else if (sym === ']') {
-                //this.turtle.stroke();
-                //this.turtle.penup();
-                if (pos_stack.length > 0 && fwd_stack.length > 0 && up_stack.length > 0 && right_stack.length > 0) {
-                    this.turtle.position(pos_stack[pos_stack.length-1]);
-                    this.turtle.fwd = fwd_stack[fwd_stack.length-1];
-                    this.turtle.up = fwd_stack[up_stack.length-1];
-                    this.turtle.right = fwd_stack[right_stack.length-1];
-                    pos_stack.pop();
-                    fwd_stack.pop();
-                    up_stack.pop();
-                    right_stack.pop();
-                }                
-                //this.turtle.pendown();
+                if ( pos_stack.length > 0 && quaternion_stack.length > 0 && yaw_stack.length > 0 && pitch_stack.length > 0 && roll_stack.length > 0) {
+                    this.turtle.moveTo( pos_stack.pop() );
+                    this.turtle.orient( quaternion_stack.pop(), yaw_stack.pop(), pitch_stack.pop(), roll_stack.pop() );
+                }
             }
         }
-        //this.turtle.stroke();
+
+        // modify lsystem object (this.obj should already be added to scene)
+        this.obj.children.pop();
+        this.obj.add(obj);
     }
 
 
