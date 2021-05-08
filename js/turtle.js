@@ -1,120 +1,100 @@
-
-
 class Turtle {
     constructor () {
-        // initially turtle is located at origin
-        this._pos = new THREE.Vector3(0,0,0);
-        
-        // initially turtle is looking upwards (along Oy), 
-        // its 'top' is along Oz and its 'side' is along Ox
-        this.turtle;
+        // initially turtle is located at the origin and is looking upwards: 
+        // its 'fwd' axis is along Oy, its 'top' is along Oz and its 'side' is along Ox
+        this.obj;  // THREE.Object3D containing turtle's local axes (assigned by makeTurtle())
+        this.axes; // turtle's axes: fwd, top and side (THREE.Vector3), orientation is given in World coordinates (assigned in makeTurtle())
         this.makeTurtle(true);
-        this._fwd = new THREE.Vector3(0,1,0);
-        this._top = new THREE.Vector3(0,0,1);
-        this._side = new THREE.Vector3(1,0,0);
 
-        // initially turtle's yaw/pitch/roll are set to 0
+        // initially turtle's yaw/pitch/roll angles are set to 0
         this._yaw = 0.;
         this._pitch = 0.;
-        this._roll = 0;
+        this._roll = 0.;
     }
 
     get position() {
-        //return this._pos;
-        return this.turtle.position;
+        // get current turtle's position (THREE.Vector3)
+        return this.obj.position.clone();
     }
 
     get yaw() {
+        // get current turtle's yaw angle (Number)
         return this._yaw;
     }
 
     get pitch() {
+        // get current turtle's pitch angle (Number)
         return this._pitch;
     }
 
     get roll() {
+        // get current turtle's roll angle (Number)
         return this._roll;
     }
-
+    
     get fwd() {
-        return this._fwd;
-        //this.turtle.children[0];
+        // get turtle's 'fwd' axis (THREE.Vector3) in World coordinates
+        // (corresponds to unit-vector in positive y-axis at default turtle's orientation)
+        let fwdPos = new THREE.Vector3();
+        this.axes.children[0].getWorldPosition(fwdPos);
+        return fwdPos.add( this.position.multiplyScalar( -1 ) ).normalize();
     }
 
     get top() {
-        return this._top;
+        // get turtle's 'top' axis (THREE.Vector3) in World coordinates
+        // (corresponds to unit-vector in positive z-axis at default turtle's orientation)
+        let topPos = new THREE.Vector3();
+        this.axes.children[1].getWorldPosition(topPos);
+        return topPos.add( this.position.multiplyScalar( -1 ) ).normalize();
     }
 
     get side() {
-        return this._side;
+        // get turtle's 'side' axis (THREE.Vector3) in World coordinates
+        // (corresponds to unit-vector in positive x-axis at default turtle's orientation)
+        let sidePos = new THREE.Vector3();
+        this.axes.children[2].getWorldPosition(sidePos);
+        return sidePos.add( this.position.multiplyScalar( -1 ) ).normalize();
     }
 
-    set position( pos ) {
-        // pos: THREE.Vector3
-        this._pos = pos;
+    yawBy( angle ) {
+        // change turtle's yaw angle by rotating turtle around 'top' axis by a given angle (Number, radians)
+        this._yaw += angle;
+        this.obj.rotateOnWorldAxis( this.top, angle );
     }
 
-    set yaw( angle ) {
-        // yaw wrt 'up' axis by a given angle (in radians)
-        const quaternion = new THREE.Quaternion();
-        quaternion.setFromAxisAngle( this._top, angle );
-
-        this._fwd.applyQuaternion( quaternion );
-        this._side.applyQuaternion( quaternion );
+    pitchBy( angle ) {
+        // change turtle's pitch angle by rotating turtle around 'side' axis by a given angle (Number, radians)
+        this._pitch += angle;
+        this.obj.rotateOnWorldAxis( this.side, angle );
     }
 
-    set pitch( angle ) {
-        // pitch wrt 'right' axis by a given angle (in radians)
-        const quaternion = new TRHEE.Quaternion();
-        quaternion.setFromAxisAngle( this._side, angle );
-
-        this._fwd.applyQuaternion( quaternion );
-        this._top.applyQuaternion( quaternion );
-    }
-
-    set roll( angle ) {
-        // roll about 'fwd' axis by a given angle (in radians)
-        const quaternion = new THREE.Quaternion();
-        quaternion.setFromAxisAngle( this._fwd, angle );
-
-        this._side.applyQuaternion( quaternion );
-        this._top.applyQuaternion( quaternion );
-    }
-
-    set fwd( val ) {
-        // val: THREE.Vector3
-        // TODO: check if val is Vector3
-        this._fwd = val;
-    }
-
-    set top( val ) {
-        this._top = val;
-    }
-
-    set side( val ) {
-        this._side = val;
+    rollBy( angle ) {
+        // change turtle's roll angle by rotating turtle around 'fwd' axis by a given angle (Number, radians)
+        this._roll += angle;
+        this.obj.rotateOnWorldAxis( this.fwd, angle );
     }
 
     makeAxes( visible=false ) {
+        // create axes object (THREE.Object3D) containing initial fwd, top and side axes (each is THREE.Mesh)
         const fwdGeo = new THREE.CylinderGeometry(0.01, 0.01, 1., 8);
         const fwdMat = new THREE.MeshBasicMaterial({ color: 0xFF0000 });
         const fwdMesh = new THREE.Mesh( fwdGeo, fwdMat );
         fwdMesh.name = 'fwd';
-        fwdMesh.position.set( 0, 1., 0 );
+        fwdMesh.position.set( 0, 0.5, 0 );
 
         const topGeo = new THREE.CylinderGeometry(0.01, 0.01, 1., 8);
         const topMat = new THREE.MeshBasicMaterial({ color: 0x0000FF });
         const topMesh = new THREE.Mesh( topGeo, topMat );
         topMesh.name = 'top';
         topMesh.rotateX( Math.PI / 2 );
-        topMesh.position.set( 0, 0.5, 0.5 );
+        topMesh.position.set( 0, 0, 0.5 );
 
         const sideGeo = new THREE.CylinderGeometry(0.01, 0.01, 1., 8);
         const sideMat = new THREE.MeshBasicMaterial({ color: 0x00FF00 });
         const sideMesh = new THREE.Mesh( sideGeo, sideMat );
         sideMesh.name = 'side';
         sideMesh.rotateZ( Math.PI / 2 );
-        sideMesh.position.set( 0.5, 0.5, 0 );
+        sideMesh.position.set( 0.5, 0, 0 );
 
         const axes = new THREE.Object3D();
         axes.add(fwdMesh);
@@ -126,21 +106,40 @@ class Turtle {
     }
 
     makeTurtle( visibleAxes=false ) {
-        this.turtle = new THREE.Object3D();
+        // create turtle object (THREE.Object3D) with axes (THREE.Object3D with 3 THREE.Mesh objects)
+        this.obj = new THREE.Object3D();
 
-        const axes = this.makeAxes( visibleAxes );
-        //this._fwd = axes.children[0];
-        //this._top = axes.children[1];
-        //this._side = axes.children[2];
+        this.axes = this.makeAxes( visibleAxes );
 
-        this.turtle.add(axes);
-        return this.turtle;
+        this.obj.add(this.axes);
+        return this.obj;
     }
 
-    move( distance ) {
-        // move some distance in the direction that the turtle in facing 
-        this.turtle.position.add(this._fwd.multiplyScalar( distance ));
-        this._pos.add(this._fwd.multiplyScalar( distance ));
-        return this._pos;        
+    forward( distance ) {
+        // move turtle some distance (Number) in the direction that the turtle in facing (fwd axis)
+        this.obj.position.add(this.fwd.multiplyScalar( distance ));
+        return this.position;        
+    }
+
+    moveTo( position ) {
+        // move turtle to a specific position (THREE.Vector3)
+        if ( !(position instanceof( THREE.Vector3 )) ) {
+            throw new TypeError(`Argument for 'Turtle.moveTo' should be of type 'THREE.Vector3' but got ${position}`);
+        }
+        this.obj.position.set( position.x, position.y, position.z );
+    }
+
+    orient( quaternion, yaw, pitch, roll ) {
+        // orient the object as specified by the quaternion (THREE.Quaternion);
+        // as a fugly temp(!!!) fix - also pass yaw/pitch/roll (each is a Number)
+        if ( !(quaternion instanceof( THREE.Quaternion )) ) {
+            throw TypeError(`Argument for 'Turtle.orion' should be of type 'THREE.Quaternion' but got ${quaternion}`);
+        }
+        this.obj.setRotationFromQuaternion( quaternion );
+        
+        // TODO: adjust yaw/pitch/roll (fugly storing of yaw/pitch/roll for now... should be derived from quaternion)
+        this._yaw = yaw; 
+        this._pitch = pitch;
+        this._roll = roll;
     }
 }
