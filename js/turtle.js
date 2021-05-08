@@ -4,7 +4,7 @@ class Turtle {
         // its 'fwd' axis is along Oy, its 'top' is along Oz and its 'side' is along Ox
         this.obj;  // THREE.Object3D containing turtle's local axes (assigned by makeTurtle())
         this.axes; // turtle's axes: fwd, top and side (THREE.Vector3), orientation is given in World coordinates (assigned in makeTurtle())
-        this.makeTurtle(true);
+        this.makeTurtle();
 
         // initially turtle's yaw/pitch/roll angles are set to 0
         this._yaw = 0.;
