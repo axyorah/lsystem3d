@@ -1,4 +1,5 @@
 let camera, scene, renderer, cameraControls, skyTexture;
+let turtle, lsys;
 const clock = new THREE.Clock();
 const container = document.querySelector("#container");
 
@@ -48,6 +49,12 @@ function fillScene() {
     // GROUND
     const ground = getGrid();
     scene.add(ground);
+
+    // LSYSTEM + TURTLE
+    turtle = new Turtle();
+    lsys = new LSystem( turtle );
+    scene.add( lsys.obj );
+
 }
 
 function setRenderer(w, h) {
