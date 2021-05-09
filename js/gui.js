@@ -34,14 +34,20 @@ updateBtn.addEventListener('click', function (evt) {
 })
 
 branchLenRng.addEventListener('input', function (evt) {
+    // recall: branchWid represents a fraction [0,1] from branchLen
     const val = this.value;
     branchLenLbl.innerText = `${branchLenLbl.innerText.split(':')[0]}: ${val}`;
+    // update both branch len and width
+    const fraction = parseFloat(branchWidRng.value);
     lsys.setBranchLen( parseFloat(val) );
+    lsys.setBranchWid( parseFloat(val) * fraction);
     lsys.draw();
 })
 
 branchWidRng.addEventListener('input', function (evt) {
-    const val = this.value;
+    // recall: branchWid represents a fraction [0,1] from branchLen
+    const fraction = this.value;
+    const val = branchLenRng.value * fraction;
     branchWidLbl.innerText = `${branchWidLbl.innerText.split(':')[0]}: ${val}`;
     lsys.setBranchWid( parseFloat(val) );
     lsys.draw();
