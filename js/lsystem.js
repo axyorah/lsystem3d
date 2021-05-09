@@ -144,18 +144,18 @@ class LSystem {
     get angleRoll() { return this._angleRoll; }
     get rules() { return this._rules; }
 
-    set branchLen( val ) { this._branchLen = val; }
-    set branchWid( val ) { this._branchWid = val; }
-    set angleYaw( val ) { this._angleYaw = val; }
-    set anglePitch( val ) { this._anglePitch = val; }
-    set angleRoll( val ) { this._angleRoll = val; }
-    set rules( keyval ) {
+    setBranchLen( val ) { this._branchLen = val; }
+    setBranchWid( val ) { this._branchWid = val; }
+    setAngleYaw( val ) { this._angleYaw = val; }
+    setAnglePitch( val ) { this._anglePitch = val; }
+    setAngleRoll( val ) { this._angleRoll = val; }
+    setRules( keyval ) {
         // keyval: {key: <key>, val: <val>}
-        this.rules[keyval.key] = keyval.val;
+        this._rules[keyval.key] = keyval.val;
     }
 
     reset() {
-        this.states = [this.axiom];
+        this._states = [this.axiom];
         this._steps = 0;
     }
 

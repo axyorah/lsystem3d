@@ -79,10 +79,10 @@ input[type="text"] {
     margin-left: -40px;
 }
 
-#button_undo, #button_restart, #button_update {
+#button-undo, #button-restart, #button-update {
     opacity: 0.8;
 }
 
-#button_undo:hover, #button_restart:hover, #button_update:hover {
+#button-undo:hover, #button-restart:hover, #button-update:hover {
     opacity: 1;
 }
