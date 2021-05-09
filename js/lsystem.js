@@ -4,22 +4,21 @@ class Brancher {
         this._wid = wid;
 
         this.mat;  // branch material
-        this.geo;  // branch geometry
-        this.mesh; // actual branch mesh (geo + mat)
+        this.capsule; // actual branch mesh (cylinder geo + mat & 2 edge spheres geo + mat)
         this.axes; // axes that show branch orientation (needed for aligning the object to vectors)
-        this.obj;  // mesh + axes (use this to rescale/reposition/reorient)
+        this.obj;  // capsule + axes (use this to rescale/reposition/reorient)
     }
 
     get len() { return this._len; }
     get wid() { return this._wid; }
 
-    // axes getter: (ax.position - mesh.position) normalized
+    // axes getter: (ax.position - capsule.position) normalized
     get fwd() {
         // get branch's 'fwd' axis (THREE.Vector3) in World coordinates
         // (corresponds to unit-vector in positive y-axis at default branch orientation)
         let fwdPos = new THREE.Vector3();
         this.axes.children[0].getWorldPosition(fwdPos);
-        return fwdPos.add( this.mesh.position.clone().multiplyScalar( -1 ) ).normalize();
+        return fwdPos.add( this.capsule.position.clone().multiplyScalar( -1 ) ).normalize();
     }
 
     get top() {
@@ -27,7 +26,7 @@ class Brancher {
         // (corresponds to unit-vector in positive z-axis at default branch orientation)
         let topPos = new THREE.Vector3();
         this.axes.children[1].getWorldPosition(topPos);
-        return topPos.add( this.mesh.position.clone().multiplyScalar( -1 ) ).normalize();
+        return topPos.add( this.capsule.position.clone().multiplyScalar( -1 ) ).normalize();
     }
 
     get side() {
@@ -35,7 +34,7 @@ class Brancher {
         // (corresponds to unit-vector in positive x-axis at default branch orientation)
         let sidePos = new THREE.Vector3();
         this.axes.children[2].getWorldPosition(sidePos);
-        return sidePos.add( this.mesh.position.clone().multiplyScalar( -1 ) ).normalize();
+        return sidePos.add( this.capsule.position.clone().multiplyScalar( -1 ) ).normalize();
     }
 
     makeAxes( visible=false ) {
@@ -70,20 +69,43 @@ class Brancher {
     }
 
     makeBranch( visibleAxes=false ) {
-        // create branch object (THREE.Object3D) containing branch mesh (THREE.Mesh) 
-        this.obj = new THREE.Object3D();
-
+        // --- branch capsule ---
+        // get branch cylinder
         this.mat = new THREE.MeshPhongMaterial( { color: 0xFFAA00, shininess: 20, opacity: 1., transparent: false } );
-        this.geo = new THREE.CylinderGeometry( this.wid, this.wid, this.len, 8);
-        this.mesh = new THREE.Mesh( this.geo, this.mat );
-        this.mesh.name = 'branch';
+        const cylinderGeo = new THREE.CylinderGeometry( this.wid, this.wid, this.len, 8);
+        
+        const cylinder = new THREE.Mesh( cylinderGeo, this.mat );
+        cylinder.name = 'branch-cylinder';
 
-        this.mesh.position.set(0, this.len/2, 0);
-        this.mesh.castShadow = true;
+        cylinder.position.set(0, this.len/2, 0);
+        cylinder.castShadow = true;
 
+        // get spherical branch edges (so that the final branch looks like a capsule)
+        const sphereGeo = new THREE.SphereGeometry( this.wid, 8, 8);
+        
+        const sphereLow = new THREE.Mesh( sphereGeo, this.mat );
+        sphereLow.name = 'branch-edge-low';
+        sphereLow.position.set(0, 0, 0);
+        
+        const sphereHigh = new THREE.Mesh( sphereGeo, this.mat );
+        sphereHigh.name = 'branch-edge-high'
+        sphereHigh.position.set(0, this.len, 0);
+        
+        // combine cylinder + 2 spheres into a capsule (branch)
+        this.capsule = new THREE.Object3D();
+        this.capsule.add(cylinder);
+        this.capsule.add(sphereLow);
+        this.capsule.add(sphereHigh);
+        this.capsule.name = 'branch';
+
+        // --- branch axes ---
+        // get branch axes
         this.axes = this.makeAxes( visibleAxes );
 
-        this.obj.add(this.mesh);
+        // --- combined ---
+        // combine capsule + axes into final object
+        this.obj = new THREE.Object3D();
+        this.obj.add(this.capsule);
         this.obj.add(this.axes);
         return this.obj;
     }
