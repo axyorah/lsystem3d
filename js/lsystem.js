@@ -1,7 +1,7 @@
 class Brancher {
-    constructor() {
-        this._len = 1.;
-        this._wid = 0.1;
+    constructor( len=1., wid=0.1 ) {
+        this._len = len;
+        this._wid = wid;
 
         this.mat;  // branch material
         this.geo;  // branch geometry
@@ -192,12 +192,11 @@ class LSystem {
         const obj = new THREE.Object3D();
         for (let sym of this.states[this.states.length-1]) {
             if (sym === 'F') { 
-                const brancher = new Brancher();
+                const brancher = new Brancher( this.branchLen, this.branchWid );
                 brancher.makeBranch();
-                branch = brancher.obj;
                 brancher.moveTo( this.turtle.position );
                 brancher.orient( this.turtle.obj.quaternion ); 
-                obj.add( branch );
+                obj.add( brancher.obj );
                 this.turtle.forward( this.branchLen );
             }
             else if (sym === '+') this.turtle.yawBy( this.angleYaw * Math.PI / 180 )
