@@ -155,8 +155,8 @@ class LSystem {
     }
 
     reset() {
-        // TODO
-        return;
+        this.states = [this.axiom];
+        this._steps = 0;
     }
 
     updateState( iters=1 ) {
@@ -168,8 +168,16 @@ class LSystem {
                 state += this.rules[sym];
             }
             this._states.push(state);
+            this._steps += 1;
         }
         return state;
+    }
+
+    undoState() {
+        if ( this._states.length > 1 ) {
+            this._states.pop();
+        }
+        return this._states[this._states.length - 1]
     }
 
     draw() {
