@@ -6,6 +6,8 @@ const branchLenRng = document.querySelector('#branch-length');
 const branchLenLbl = document.querySelector('#branch-length-lbl');
 const branchWidRng = document.querySelector('#branch-width');
 const branchWidLbl = document.querySelector('#branch-width-lbl');
+const branchColor = document.querySelector('#branch-color');
+const branchColorLbl = document.querySelector('#branch-color-lbl');
 
 const yawRng = document.querySelector('#yaw');
 const yawLbl = document.querySelector('#yaw-lbl');
@@ -51,6 +53,11 @@ branchWidRng.addEventListener('input', function (evt) {
     branchWidLbl.innerText = `${branchWidLbl.innerText.split(':')[0]}: ${val}`;
     lsys.setBranchWid( parseFloat(val) );
     lsys.draw();
+})
+
+branchColor.addEventListener('change', function (evt) {
+    const val = this.value;
+    lsys.setBranchColor( val );    
 })
 
 yawRng.addEventListener('input', function (evt) {

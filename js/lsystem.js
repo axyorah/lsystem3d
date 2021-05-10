@@ -1,7 +1,8 @@
 class Brancher {
-    constructor( len=1., wid=0.1 ) {
+    constructor( len=1., wid=0.1, color=0xFFAA00 ) {
         this._len = len;
         this._wid = wid;
+        this._color = color;
 
         this.mat;  // branch material
         this.capsule; // actual branch mesh (cylinder geo + mat & 2 edge spheres geo + mat)
@@ -11,6 +12,7 @@ class Brancher {
 
     get len() { return this._len; }
     get wid() { return this._wid; }
+    get color() { return this._color; }
 
     // axes getter: (ax.position - capsule.position) normalized
     get fwd() {
@@ -71,7 +73,7 @@ class Brancher {
     makeBranch( visibleAxes=false ) {
         // --- branch capsule ---
         // get branch cylinder
-        this.mat = new THREE.MeshPhongMaterial( { color: 0xFFAA00, shininess: 20, opacity: 1., transparent: false } );
+        this.mat = new THREE.MeshPhongMaterial( { color: this.color, shininess: 20, opacity: 1., transparent: false } );
         const cylinderGeo = new THREE.CylinderGeometry( this.wid, this.wid, this.len, 8);
         
         const cylinder = new THREE.Mesh( cylinderGeo, this.mat );
@@ -133,6 +135,7 @@ class LSystem {
 
         this._branchLen = 1;
         this._branchWid = 0.1;
+        this._branchColor = 0xFFAA00;
 
         this._angleYaw = 25;   // - +
         this._anglePitch = 35; // ^ v
@@ -161,6 +164,7 @@ class LSystem {
     get states() { return this._states; }
     get branchLen() { return this._branchLen; }
     get branchWid() { return this._branchWid; }
+    get branchColor() { return this._branchColor; }
     get angleYaw() { return this._angleYaw; }
     get anglePitch() { return this._anglePitch; }
     get angleRoll() { return this._angleRoll; }
@@ -168,6 +172,18 @@ class LSystem {
 
     setBranchLen( val ) { this._branchLen = val; }
     setBranchWid( val ) { this._branchWid = val; }
+    setBranchColor( val ) {
+        this._branchColor = val;
+        for ( let segment of this.obj.children[0].children ) {
+            for ( let child of segment.children ) {
+                if ( child.name === 'branch' ) {
+                    for ( let primitive of child.children ) {
+                        primitive.material.color.set(val);
+                    }
+                }
+            }
+        }
+    }
     setAngleYaw( val ) { this._angleYaw = val; }
     setAnglePitch( val ) { this._anglePitch = val; }
     setAngleRoll( val ) { this._angleRoll = val; }
@@ -214,7 +230,7 @@ class LSystem {
         const obj = new THREE.Object3D();
         for (let sym of this.states[this.states.length-1]) {
             if (sym === 'F') { 
-                const brancher = new Brancher( this.branchLen, this.branchWid );
+                const brancher = new Brancher( this.branchLen, this.branchWid, this.branchColor );
                 brancher.makeBranch();
                 brancher.moveTo( this.turtle.position );
                 brancher.orient( this.turtle.obj.quaternion ); 
@@ -246,6 +262,4 @@ class LSystem {
         this.obj.children.pop();
         this.obj.add(obj);
     }
-
-
 }
