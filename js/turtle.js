@@ -3,7 +3,7 @@ class Turtle {
         // initially turtle is located at the origin and is looking upwards: 
         // its 'fwd' axis is along Oy, its 'top' is along Oz and its 'side' is along Ox
         this.obj;  // THREE.Object3D containing turtle's local axes (assigned by makeTurtle())
-        this.axes; // turtle's axes: fwd, top and side (THREE.Vector3), orientation is given in World coordinates (assigned in makeTurtle())
+        this.axes; // turtle's axes: fwd, top and side (THREE.Line)
         this.makeTurtle();
 
         // initially turtle's yaw/pitch/roll angles are set to 0
@@ -113,7 +113,7 @@ class Turtle {
     }
 
     makeTurtle( visibleAxes=false ) {
-        // create turtle object (THREE.Object3D) with axes (THREE.Object3D with 3 THREE.Mesh objects)
+        // create turtle object (THREE.Object3D) with axes (THREE.Object3D with 3 THREE.Line objects)
         this.obj = new THREE.Object3D();
 
         this.axes = this.makeAxes( visibleAxes );
