@@ -74,32 +74,39 @@ class Turtle {
         this.obj.rotateOnWorldAxis( this.fwd, angle );
     }
 
-    makeAxes( visible=false ) {
-        // create axes object (THREE.Object3D) containing initial fwd, top and side axes (each is THREE.Mesh)
-        const fwdGeo = new THREE.CylinderGeometry(0.01, 0.01, 1., 8);
-        const fwdMat = new THREE.MeshBasicMaterial({ color: 0xFF0000 });
-        const fwdMesh = new THREE.Mesh( fwdGeo, fwdMat );
-        fwdMesh.name = 'fwd';
-        fwdMesh.position.set( 0, 0.5, 0 );
+    makeUnitLine() {
+        // returns red vertical unit line 
+        const points = [new THREE.Vector3( 0, -0.5, 0 ), new THREE.Vector3( 0, 0.5, 0 )];
+        
+        const geometry = new THREE.BufferGeometry().setFromPoints( points );
+        const material = new THREE.LineBasicMaterial({ color: 0xFF0000 });
 
-        const topGeo = new THREE.CylinderGeometry(0.01, 0.01, 1., 8);
-        const topMat = new THREE.MeshBasicMaterial({ color: 0x0000FF });
-        const topMesh = new THREE.Mesh( topGeo, topMat );
-        topMesh.name = 'top';
-        topMesh.rotateX( Math.PI / 2 );
-        topMesh.position.set( 0, 0, 0.5 );
+        return new THREE.Line( geometry, material );
+    }
 
-        const sideGeo = new THREE.CylinderGeometry(0.01, 0.01, 1., 8);
-        const sideMat = new THREE.MeshBasicMaterial({ color: 0x00FF00 });
-        const sideMesh = new THREE.Mesh( sideGeo, sideMat );
-        sideMesh.name = 'side';
-        sideMesh.rotateZ( Math.PI / 2 );
-        sideMesh.position.set( 0.5, 0, 0 );
+    makeAxes( visible=false ) {     
+        // create axes object (THREE.Object3D) containing initial fwd, top and side axes (each is THREE.Line)   
+        const fwd = this.makeUnitLine();
+        fwd.position.set(0, 0.5, 0);
+        fwd.name = 'fwd';
+
+        const top = this.makeUnitLine();
+        top.rotateX( Math.PI / 2 );
+        top.position.set(0, 0, 0.5);
+        top.material.color.set(0x0000FF);
+        top.name = 'top';
+
+        const side = this.makeUnitLine();
+        side.rotateZ( Math.PI / 2 );
+        side.position.set(0.5, 0, 0);
+        side.material.color.set(0x00FF00);
+        side.name = 'side';
 
         const axes = new THREE.Object3D();
-        axes.add(fwdMesh);
-        axes.add(topMesh);
-        axes.add(sideMesh);
+        axes.add(fwd);
+        axes.add(top);
+        axes.add(side);
+        axes.name = 'axes';
         axes.visible = visible;
 
         return axes;
