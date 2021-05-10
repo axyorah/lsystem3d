@@ -95,6 +95,11 @@ class LSystem {
     }
 
     getNewBranch() {
+        // we need to make a default(!) branch and move/orient/scale(!!!)/color it later
+        // otherwise scale references for 'updateConfig()' become a bit less straightforward...
+        // returns THREE.Object3D() with name 'branch'
+        // consisting of 'branch-capsule' (THREE.Object3D()) and 'axes' (THREE.Object3D())
+        // 'branch-capsule' consists of cylinder mesh and two sphere meshes
         const brancher = new Brancher( );// 1, 0.1, this.branchColor );//this.branchLen, this.branchWid, this.branchColor );
         brancher.makeBranch();
         brancher.rescale( this.branchWid, this.branchLen, this.branchWid );
@@ -106,10 +111,38 @@ class LSystem {
     }
 
     updateExistingBranch( branch ) {
-        const p = this.turtle.position.clone();
-        const q = this.turtle.obj.quaternion.clone();
+        // branch is a THREE.Object3D() with the following structure:
+        // 'branch' (THREE.Object3D())
+        //   |-- 'branch-capsule' (THREE.Object3D())
+        //   |     |-- 'branch-cylinder' (THREE.Mesh) oriented along y-axis
+        //   |     |-- 'branch-edge-low' [sphere] (THREE.Mesh)
+        //   |     |-- 'branch-edge-high' [sphere] (THREE.Mesh)
+        //   | 
+        //   |-- 'axes' (THREE.Object3D())
+        //         |-- 'fwd' (THREE.Mesh)
+        //         |-- 'top' (THREE.Mesh)
+        //         |-- 'side' (THREE.Mesh)
+        // To rescale branch we could do something like:
+        //     this.obj.scale.set( this.branchWid / this.branchWid0, this.branchLen / this.branchLen0, this.branchWid / this.branchWid0 );
+        // but this distorts the edges;
+        // we want the edges to remain perfect spheres at all scales,
+        // so we only rescale the cylinder
         
-        branch.scale.set( this.branchWid / this.branchWid0, this.branchLen / this.branchLen0, this.branchWid / this.branchWid0 )
+        // rescale
+        const cylinder = branch.children[0].children[0];
+        const sphere1 = branch.children[0].children[1];
+        const sphere2 = branch.children[0].children[2];
+
+        cylinder.scale.set( this.branchWid / this.branchWid0, this.branchLen / this.branchLen0, this.branchWid / this.branchWid0 );
+        sphere1.scale.set( this.branchWid / this.branchWid0, this.branchWid / this.branchWid0, this.branchWid / this.branchWid0 );
+        sphere2.scale.set( this.branchWid / this.branchWid0, this.branchWid / this.branchWid0, this.branchWid / this.branchWid0 );
+
+        cylinder.position.set(0, this.branchLen/2, 0);
+        sphere2.position.set(0, this.branchLen, 0);
+
+        // reorient/reposition
+        const p = this.turtle.position.clone();
+        const q = this.turtle.obj.quaternion.clone(); 
         branch.quaternion.set( q.x, q.y, q.z, q.w );
         branch.position.set( p.x, p.y, p.z );
     }
@@ -133,9 +166,7 @@ class LSystem {
         const obj = new THREE.Object3D();
         // make new geometries
         for (let sym of this.states[this.states.length-1]) {
-            if (sym === 'F') { 
-                // we need to make a default(!) branch and move/orient/scale(!!!)/color it later
-                // otherwise scale references for 'updateConfig()' become a bit less straightforward...
+            if (sym === 'F') {                 
                 branch = this.getNewBranch();
 
                 obj.add( branch );

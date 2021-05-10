@@ -53,6 +53,7 @@ branchWidRng.addEventListener('input', function (evt) {
     branchWidLbl.innerText = `${branchWidLbl.innerText.split(':')[0]}: ${fraction}`;
     lsys.setBranchWid( parseFloat(val) );
     lsys.updateConfig();
+    //lsys.draw();
 })
 
 branchColor.addEventListener('change', function (evt) {

@@ -136,7 +136,35 @@ class Brancher {
 
     rescale( x, y, z ) {
         // x, y, z - are new width, length and depth
-        this.obj.scale.set( x / this.wid0, y / this.len0, z / this.wid0 );
+        // recall: in default state branch is oriented 'along' the y-axis
+        // branch is a THREE.Object3D() with the following structure:
+        // 'branch' (THREE.Object3D())
+        //   |-- 'branch-capsule' (THREE.Object3D())
+        //   |     |-- 'branch-cylinder' (THREE.Mesh) oriented along y-axis
+        //   |     |-- 'branch-edge-low' [sphere] (THREE.Mesh)
+        //   |     |-- 'branch-edge-high' [sphere] (THREE.Mesh)
+        //   | 
+        //   |-- 'axes' (THREE.Object3D())
+        //         |-- 'fwd' (THREE.Mesh)
+        //         |-- 'top' (THREE.Mesh)
+        //         |-- 'side' (THREE.Mesh)
+        // To rescale branch we could do something like:
+        //     this.obj.scale.set( x / this.wid0, y / this.len0, z / this.wid0 );
+        // but this distorts the edges;
+        // we want the edges to remain perfect spheres at all scales,
+        // so we only rescale the cylinder
+        const branch = this.obj;
+
+        const cylinder = branch.children[0].children[0];
+        const sphere1 = branch.children[0].children[1];
+        const sphere2 = branch.children[0].children[2];
+
+        cylinder.scale.set( x / this.wid0, y / this.len0, z / this.wid0 );
+        sphere1.scale.set( x / this.wid0, x / this.wid0, x / this.wid0 );
+        sphere2.scale.set( x / this.wid0, x / this.wid0, x / this.wid0 );
+
+        cylinder.position.set(0, y/2, 0);
+        sphere2.position.set(0, y, 0);
     }
 
     recolor( color ) {
