@@ -75,8 +75,7 @@ class Brancher {
         return axes;
     }
 
-    makeBranch( visibleAxes=false ) {
-        // --- branch capsule ---
+    makeCapsule() {
         // get branch cylinder
         this.mat = new THREE.MeshPhongMaterial( { color: this.color, shininess: 20, opacity: 1., transparent: false } );
         const cylinderGeo = new THREE.CylinderGeometry( this.wid, this.wid, this.len, 8);
@@ -99,17 +98,22 @@ class Brancher {
         sphereHigh.position.set(0, this.len, 0);
         
         // combine cylinder + 2 spheres into a capsule (branch)
-        this.capsule = new THREE.Object3D();
-        this.capsule.add(cylinder);
-        this.capsule.add(sphereLow);
-        this.capsule.add(sphereHigh);
-        this.capsule.name = 'branch-capsule';
+        const capsule = new THREE.Object3D();
+        capsule.add(cylinder);
+        capsule.add(sphereLow);
+        capsule.add(sphereHigh);
+        capsule.name = 'branch-capsule';
 
-        // --- branch axes ---
-        // get branch axes
+        return capsule
+    }
+
+    makeBranch( visibleAxes=false ) {
+        // branch capsule
+        this.capsule = this.makeCapsule();
+
+        // branch axes        
         this.axes = this.makeAxes( visibleAxes );
 
-        // --- combined ---
         // combine capsule + axes into final object
         this.obj = new THREE.Object3D();
         this.obj.add(this.capsule);
@@ -135,6 +139,7 @@ class Brancher {
     }
 
     rescale( x, y, z ) {
+        // rescale the branch to fit new dimensions:
         // x, y, z - are new width, length and depth
         // recall: in default state branch is oriented 'along' the y-axis
         // branch is a THREE.Object3D() with the following structure:

@@ -95,12 +95,13 @@ class LSystem {
     }
 
     getNewBranch() {
-        // we need to make a default(!) branch and move/orient/scale(!!!)/color it later
+        // creates new branch with dimensions specified by 'this' parameters;
+        // we first make a default(!) branch and move/orient/scale(!!!)/color it later
         // otherwise scale references for 'updateConfig()' become a bit less straightforward...
         // returns THREE.Object3D() with name 'branch'
         // consisting of 'branch-capsule' (THREE.Object3D()) and 'axes' (THREE.Object3D())
         // 'branch-capsule' consists of cylinder mesh and two sphere meshes
-        const brancher = new Brancher( );// 1, 0.1, this.branchColor );//this.branchLen, this.branchWid, this.branchColor );
+        const brancher = new Brancher( );
         brancher.makeBranch();
         brancher.rescale( this.branchWid, this.branchLen, this.branchWid );
         brancher.orient( this.turtle.obj.quaternion );
