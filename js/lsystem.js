@@ -49,17 +49,16 @@ class LSystem {
     setBranchWid0( val ) { this._branchWid0 = val; }
     setBranchColor( val ) {
         this._branchColor = val;
-        for ( let segment of this.obj.children[0].children ) {
+        const segments = this.obj.children[0].children;
+        segments.map( (segment) => {
             if ( segment.name === 'branch' ) {
-                for ( let child of segment.children ) { 
-                    if ( child.name === 'branch-capsule' ) {
-                        for ( let primitive of child.children ) {
-                            primitive.material.color.set(val);
-                        }
+                segment.children.map( (child) => {
+                    if ( child.name === 'branch-capsule' ) { 
+                        child.children.map( (primitive) => primitive.material.color.set(val) );
                     }
-                }
+                } )
             }
-        }
+        } )
     }
     setAngleYaw( val ) { this._angleYaw = val; }
     setAnglePitch( val ) { this._anglePitch = val; }
