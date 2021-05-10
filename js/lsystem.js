@@ -94,6 +94,26 @@ class LSystem {
         return this._states[this._states.length - 1]
     }
 
+    getNewBranch() {
+        const brancher = new Brancher( );// 1, 0.1, this.branchColor );//this.branchLen, this.branchWid, this.branchColor );
+        brancher.makeBranch();
+        brancher.rescale( this.branchWid, this.branchLen, this.branchWid );
+        brancher.orient( this.turtle.obj.quaternion );
+        brancher.moveTo( this.turtle.position );
+        brancher.recolor( this.branchColor );
+
+        return brancher.obj;
+    }
+
+    updateExistingBranch( branch ) {
+        const p = this.turtle.position.clone();
+        const q = this.turtle.obj.quaternion.clone();
+        
+        branch.scale.set( this.branchWid / this.branchWid0, this.branchLen / this.branchLen0, this.branchWid / this.branchWid0 )
+        branch.quaternion.set( q.x, q.y, q.z, q.w );
+        branch.position.set( p.x, p.y, p.z );
+    }
+
     draw() {
         // creates new geometry;
         // use it if lsystem state has been incremented or rules have been changed
@@ -116,14 +136,9 @@ class LSystem {
             if (sym === 'F') { 
                 // we need to make a default(!) branch and move/orient/scale(!!!)/color it later
                 // otherwise scale references for 'updateConfig()' become a bit less straightforward...
-                const brancher = new Brancher( );// 1, 0.1, this.branchColor );//this.branchLen, this.branchWid, this.branchColor );
-                brancher.makeBranch();
-                brancher.rescale( this.branchWid, this.branchLen, this.branchWid );
-                brancher.orient( this.turtle.obj.quaternion );
-                brancher.moveTo( this.turtle.position );
-                brancher.recolor( this.branchColor );
+                branch = this.getNewBranch();
 
-                obj.add( brancher.obj );
+                obj.add( branch );
                 this.turtle.forward( this.branchLen );
             }
             else if (sym === '+') this.turtle.yawBy( this.angleYaw * Math.PI / 180 )
@@ -157,7 +172,7 @@ class LSystem {
 
     updateConfig() {
         // updates the existing geometry;
-        // use it if dimensions were changed
+        // use it if dimensions/orientation were changed
 
         // if there's nothing to update - exit
         if ( !this.obj.children.length ) {
@@ -181,12 +196,7 @@ class LSystem {
         for (let sym of this.states[this.states.length-1]) {
             if (sym === 'F') { 
                 if ( segments[iBranch].name === 'branch' ) {
-                    const p = this.turtle.position.clone();
-                    const q = this.turtle.obj.quaternion.clone();
-                    
-                    segments[iBranch].scale.set( this.branchWid / this.branchWid0, this.branchLen / this.branchLen0, this.branchWid / this.branchWid0 )
-                    segments[iBranch].quaternion.set( q.x, q.y, q.z, q.w );
-                    segments[iBranch].position.set( p.x, p.y, p.z );
+                    this.updateExistingBranch( segments[iBranch] );
                     iBranch += 1;
                 }
                 this.turtle.forward( this.branchLen );
