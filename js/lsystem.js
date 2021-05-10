@@ -70,8 +70,8 @@ class LSystem {
         this._steps = 0;
     }
 
-    updateState( iters=1 ) {
-        // "grows" (updates) the LSystem for `iters` steps and 
+    incrementState( iters=1 ) {
+        // "grows" (increments) the LSystem for `iters` steps and 
         // appends the resulting states to the `this._states` array
         let state0, state;
         for ( let i = 0; i < iters; i++ ) {

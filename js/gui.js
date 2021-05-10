@@ -31,7 +31,7 @@ restartBtn.addEventListener('click', function (evt) {
 })
 
 updateBtn.addEventListener('click', function (evt) {
-    lsys.updateState();
+    lsys.incrementState();
     lsys.draw();    
 })
 
@@ -87,7 +87,7 @@ ruleXInpt.addEventListener('change', function (evt) {
 
     const steps = lsys._states.length - 1;
     lsys.reset();
-    lsys.updateState( steps );
+    lsys.incrementState( steps );
     lsys.draw();
 })
 
@@ -97,6 +97,6 @@ ruleFInpt.addEventListener('change', function (evt) {
 
     const steps = lsys._states.length - 1;
     lsys.reset();
-    lsys.updateState( steps );
+    lsys.incrementState( steps );
     lsys.draw();
 })
