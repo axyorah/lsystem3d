@@ -1,5 +1,8 @@
 class Brancher {
     constructor( len=1., wid=0.1, color=0xFFAA00 ) {
+        this._len0 = len;
+        this._wid0 = wid;
+
         this._len = len;
         this._wid = wid;
         this._color = color;
@@ -10,6 +13,8 @@ class Brancher {
         this.obj;  // capsule + axes (use this to rescale/reposition/reorient)
     }
 
+    get len0() { return this._len0; }
+    get wid0() { return this._wid0; }
     get len() { return this._len; }
     get wid() { return this._wid; }
     get color() { return this._color; }
@@ -127,5 +132,19 @@ class Brancher {
             throw TypeError(`Argument for 'Turtle.orion' should be of type 'THREE.Quaternion' but got ${quaternion}`);
         }
         this.obj.setRotationFromQuaternion( quaternion );
+    }
+
+    rescale( x, y, z ) {
+        // x, y, z - are new width, length and depth
+        this.obj.scale.set( x / this.wid0, y / this.len0, z / this.wid0 );
+    }
+
+    recolor( color ) {
+        // color - is the new branch color
+        this.obj.children.map( (child) => {
+            if ( child.name === 'branch-capsule' ) {
+                child.children.map( (primitive) => primitive.material.color.set(color) );
+            }
+        } )
     }
 }
