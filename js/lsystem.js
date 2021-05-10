@@ -98,7 +98,7 @@ class Brancher {
         this.capsule.add(cylinder);
         this.capsule.add(sphereLow);
         this.capsule.add(sphereHigh);
-        this.capsule.name = 'branch';
+        this.capsule.name = 'branch-capsule';
 
         // --- branch axes ---
         // get branch axes
@@ -109,6 +109,7 @@ class Brancher {
         this.obj = new THREE.Object3D();
         this.obj.add(this.capsule);
         this.obj.add(this.axes);
+        this.obj.name = 'branch';
         return this.obj;
     }
 
@@ -132,7 +133,9 @@ class Brancher {
 class LSystem {
     constructor( turtle ) {
         this.turtle = turtle;
-
+        
+        this._branchLen0 = 1;
+        this._branchWid0 = 0.1;
         this._branchLen = 1;
         this._branchWid = 0.1;
         this._branchColor = 0xFFAA00;
@@ -164,6 +167,8 @@ class LSystem {
     get states() { return this._states; }
     get branchLen() { return this._branchLen; }
     get branchWid() { return this._branchWid; }
+    get branchLen0() { return this._branchLen0; }
+    get branchWid0() { return this._branchWid0; }
     get branchColor() { return this._branchColor; }
     get angleYaw() { return this._angleYaw; }
     get anglePitch() { return this._anglePitch; }
@@ -172,13 +177,17 @@ class LSystem {
 
     setBranchLen( val ) { this._branchLen = val; }
     setBranchWid( val ) { this._branchWid = val; }
+    setBranchLen0( val ) { this._branchLen0 = val; }
+    setBranchWid0( val ) { this._branchWid0 = val; }
     setBranchColor( val ) {
         this._branchColor = val;
         for ( let segment of this.obj.children[0].children ) {
-            for ( let child of segment.children ) {
-                if ( child.name === 'branch' ) {
-                    for ( let primitive of child.children ) {
-                        primitive.material.color.set(val);
+            if ( segment.name === 'branch' ) {
+                for ( let child of segment.children ) { 
+                    if ( child.name === 'branch-capsule' ) {
+                        for ( let primitive of child.children ) {
+                            primitive.material.color.set(val);
+                        }
                     }
                 }
             }
@@ -219,21 +228,39 @@ class LSystem {
     }
 
     draw() {
+        // creates new geometry;
+        // use it if lsystem state has been incremented or rules have been changed
         let branch, leaf; // TODO: leaf
+        
+        // reset turtle
+        this.turtle.reset();
 
+        // initiate position/orientation stacks
         let pos_stack = [];
         let quaternion_stack = [];
         let yaw_stack = [];
         let pitch_stack = [];
         let roll_stack = [];
-
+        
+        // make temp Object3D to store geometry
         const obj = new THREE.Object3D();
+        // make new geometries
         for (let sym of this.states[this.states.length-1]) {
             if (sym === 'F') { 
-                const brancher = new Brancher( this.branchLen, this.branchWid, this.branchColor );
+                // we need to make a default(!) branch and move/orient/scale(!!!)/color it later
+                // otherwise scale references for 'updateConfig()' become a bit less straightforward...
+                const brancher = new Brancher( );// 1, 0.1, this.branchColor );//this.branchLen, this.branchWid, this.branchColor );
                 brancher.makeBranch();
                 brancher.moveTo( this.turtle.position );
-                brancher.orient( this.turtle.obj.quaternion ); 
+                brancher.orient( this.turtle.obj.quaternion );
+                brancher.obj.scale.set( this.branchWid / this.branchWid0, this.branchLen / this.branchLen0, this.branchWid / this.branchWid0 );
+                brancher.obj.children.map( (child) =>  {
+                    // ignore axes, color only capsule
+                    if ( child.name === 'branch-capsule' ) {
+                        child.children.map( (primitive) => primitive.material.color.set(this.branchColor) );
+                    }
+                });
+
                 obj.add( brancher.obj );
                 this.turtle.forward( this.branchLen );
             }
@@ -261,5 +288,71 @@ class LSystem {
         // modify lsystem object (this.obj should already be added to scene)
         this.obj.children.pop();
         this.obj.add(obj);
+
+        // reset turtle
+        this.turtle.reset();
+    }
+
+    updateConfig() {
+        // updates the existing geometry;
+        // use it if dimensions were changed
+
+        // if there's nothing to update - exit
+        if ( !this.obj.children.length ) {
+            return;
+        }
+
+        // reset turtle
+        this.turtle.reset();
+
+        // initiate position/orientation stacks
+        let pos_stack = [];
+        let quaternion_stack = [];
+        let yaw_stack = [];
+        let pitch_stack = [];
+        let roll_stack = [];
+
+        let segments = this.obj.children[0].children; // each segment: branch + axes
+        let iBranch = 0;
+
+        console.log(segments[0].scale.x, segments[0].scale.y, segments[0].scale.z);
+
+        //const obj = new THREE.Object3D();
+        for (let sym of this.states[this.states.length-1]) {
+            if (sym === 'F') { 
+                if ( segments[iBranch].name === 'branch' ) {
+                    const p = this.turtle.position.clone();
+                    const q = this.turtle.obj.quaternion.clone();
+                    
+                    segments[iBranch].scale.set( this.branchWid / this.branchWid0, this.branchLen / this.branchLen0, this.branchWid / this.branchWid0 )
+                    segments[iBranch].quaternion.set( q.x, q.y, q.z, q.w );
+                    segments[iBranch].position.set( p.x, p.y, p.z );
+                    iBranch += 1;
+                }
+                this.turtle.forward( this.branchLen );
+            }
+            else if (sym === '+') this.turtle.yawBy( this.angleYaw * Math.PI / 180 )
+            else if (sym === '-') this.turtle.yawBy(-this.angleYaw * Math.PI / 180 )
+            else if (sym === '^') this.turtle.pitchBy( this.anglePitch * Math.PI / 180 )
+            else if (sym === 'v') this.turtle.pitchBy(-this.anglePitch * Math.PI / 180 )
+            else if (sym === 'd') this.turtle.rollBy( this.angleRoll * Math.PI / 180 )
+            else if (sym === 'b') this.turtle.rollBy(-this.angleRoll * Math.PI / 180 )
+            else if (sym === '[') {
+                pos_stack.push( this.turtle.position );
+                quaternion_stack.push( this.turtle.obj.quaternion.clone() );
+                yaw_stack.push( this.turtle.yaw );
+                pitch_stack.push( this.turtle.pitch );
+                roll_stack.push( this.turtle.roll );
+            }
+            else if (sym === ']') {
+                if ( pos_stack.length > 0 && quaternion_stack.length > 0 && yaw_stack.length > 0 && pitch_stack.length > 0 && roll_stack.length > 0) {
+                    this.turtle.moveTo( pos_stack.pop() );
+                    this.turtle.orient( quaternion_stack.pop(), yaw_stack.pop(), pitch_stack.pop(), roll_stack.pop() );
+                }
+            }
+        }
+        
+        // reset turtle
+        this.turtle.reset();
     }
 }

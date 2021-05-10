@@ -142,4 +142,12 @@ class Turtle {
         this._pitch = pitch;
         this._roll = roll;
     }
+
+    reset () {
+        this.obj.position.set(0,0,0);
+        this.obj.quaternion.set(0,0,0,1);
+        this._yaw = 0;
+        this._pitch = 0;
+        this._roll = 0;
+    }
 }

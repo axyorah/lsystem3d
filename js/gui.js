@@ -43,7 +43,6 @@ branchLenRng.addEventListener('input', function (evt) {
     const fraction = parseFloat(branchWidRng.value);
     lsys.setBranchLen( parseFloat(val) );
     lsys.setBranchWid( parseFloat(val) * fraction);
-    //lsys.draw();
     lsys.updateConfig();
 })
 
@@ -53,7 +52,6 @@ branchWidRng.addEventListener('input', function (evt) {
     const val = branchLenRng.value * fraction;
     branchWidLbl.innerText = `${branchWidLbl.innerText.split(':')[0]}: ${fraction}`;
     lsys.setBranchWid( parseFloat(val) );
-    //lsys.draw();
     lsys.updateConfig();
 })
 
@@ -66,7 +64,6 @@ yawRng.addEventListener('input', function (evt) {
     const val = this.value;
     yawLbl.innerText = `${yawLbl.innerText.split(':')[0]}: ${val}`;
     lsys.setAngleYaw( parseFloat(val) );
-    //lsys.draw();
     lsys.updateConfig();
 })
 
@@ -74,7 +71,6 @@ pitchRng.addEventListener('input', function (evt) {
     const val = this.value;
     pitchLbl.innerText = `${pitchLbl.innerText.split(':')[0]}: ${val}`;
     lsys.setAnglePitch( parseFloat(val) );
-    //lsys.draw();
     lsys.updateConfig();
 })
 
@@ -82,7 +78,6 @@ rollRng.addEventListener('input', function (evt) {
     const val = this.value;
     rollLbl.innerText = `${rollLbl.innerText.split(':')[0]}: ${val}`;
     lsys.setAngleRoll( parseFloat(val) );
-    //lsys.draw();
     lsys.updateConfig();
 })
 
