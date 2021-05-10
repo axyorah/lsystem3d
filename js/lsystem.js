@@ -63,10 +63,7 @@ class LSystem {
     setAngleYaw( val ) { this._angleYaw = val; }
     setAnglePitch( val ) { this._anglePitch = val; }
     setAngleRoll( val ) { this._angleRoll = val; }
-    setRules( keyval ) {
-        // keyval: {key: <key>, val: <val>}
-        this._rules[keyval.key] = keyval.val;
-    }
+    setRules( key, val ) { this._rules[key] = val; }
 
     reset() {
         this._states = [this.axiom];
@@ -74,8 +71,10 @@ class LSystem {
     }
 
     updateState( iters=1 ) {
+        // "grows" (updates) the LSystem for `iters` steps and 
+        // appends the resulting states to the `this._states` array
         let state0, state;
-        for (let i = 0; i < iters; i++) {
+        for ( let i = 0; i < iters; i++ ) {
             state0 = this.states[this.states.length-1];
             state = "";
             for (let sym of state0) {
@@ -88,6 +87,7 @@ class LSystem {
     }
 
     undoState() {
+        // removes the last state unless it's an axiom
         if ( this._states.length > 1 ) {
             this._states.pop();
         }
@@ -118,15 +118,10 @@ class LSystem {
                 // otherwise scale references for 'updateConfig()' become a bit less straightforward...
                 const brancher = new Brancher( );// 1, 0.1, this.branchColor );//this.branchLen, this.branchWid, this.branchColor );
                 brancher.makeBranch();
-                brancher.moveTo( this.turtle.position );
+                brancher.rescale( this.branchWid, this.branchLen, this.branchWid );
                 brancher.orient( this.turtle.obj.quaternion );
-                brancher.obj.scale.set( this.branchWid / this.branchWid0, this.branchLen / this.branchLen0, this.branchWid / this.branchWid0 );
-                brancher.obj.children.map( (child) =>  {
-                    // ignore axes, color only capsule
-                    if ( child.name === 'branch-capsule' ) {
-                        child.children.map( (primitive) => primitive.material.color.set(this.branchColor) );
-                    }
-                });
+                brancher.moveTo( this.turtle.position );
+                brancher.recolor( this.branchColor );
 
                 obj.add( brancher.obj );
                 this.turtle.forward( this.branchLen );
@@ -182,7 +177,7 @@ class LSystem {
         let segments = this.obj.children[0].children; // each segment: branch-capsule + axes
         let iBranch = 0;
 
-        //const obj = new THREE.Object3D();
+        // update existing geometries
         for (let sym of this.states[this.states.length-1]) {
             if (sym === 'F') { 
                 if ( segments[iBranch].name === 'branch' ) {

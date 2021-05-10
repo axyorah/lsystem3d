@@ -83,7 +83,7 @@ rollRng.addEventListener('input', function (evt) {
 
 ruleXInpt.addEventListener('change', function (evt) {
     const val = this.value;
-    lsys.setRules({key: 'X', val: val});
+    lsys.setRules( 'X', val);
 
     const steps = lsys._states.length - 1;
     lsys.reset();
@@ -93,7 +93,7 @@ ruleXInpt.addEventListener('change', function (evt) {
 
 ruleFInpt.addEventListener('change', function (evt) {
     const val = this.value;
-    lsys.setRules({key: 'F', val: val});
+    lsys.setRules( 'F', val );
 
     const steps = lsys._states.length - 1;
     lsys.reset();
