@@ -36,6 +36,8 @@ class Leaf extends Part {
 
     makeLeafGeometry() {
         /*
+        assemble leaf geometry from the following scheme:
+
               pts           edges         faces
               * 3             *             *
                           3 / | \ 2       / | \

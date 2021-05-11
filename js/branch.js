@@ -90,12 +90,12 @@ class Branch extends Part {
         //   |-- 'branch-capsule' (THREE.Object3D())
         //   |     |-- 'branch-cylinder' (THREE.Mesh) oriented along y-axis
         //   |     |-- 'branch-edge-low' [sphere] (THREE.Mesh)
-        //   |     |-- 'branch-edge-high' [sphere] (THREE.Mesh)
+        //   |     +-- 'branch-edge-high' [sphere] (THREE.Mesh)
         //   | 
-        //   |-- 'axes' (THREE.Object3D())
-        //         |-- 'fwd' (THREE.Mesh)
-        //         |-- 'top' (THREE.Mesh)
-        //         |-- 'side' (THREE.Mesh)
+        //   +-- 'axes' (THREE.Object3D())
+        //         |-- 'fwd' (THREE.Line)
+        //         |-- 'top' (THREE.Line)
+        //         |-- 'side' (THREE.Line)
         // To rescale branch we could do something like:
         //     this.obj.scale.set( x / this.wid0, y / this.len0, z / this.wid0 );
         // but this distorts the edges;
