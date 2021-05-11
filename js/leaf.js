@@ -115,7 +115,9 @@ class Leaf extends Part {
     }
 
     makeCapsule() {
-        this.mat = new THREE.MeshPhongMaterial( { color: this.color, shininess: 20, opacity: 1., transparent: false, side: THREE.DoubleSide } );
+        this.mat = new THREE.MeshPhongMaterial( { 
+            color: this.color, shininess: 20, side: THREE.DoubleSide 
+        } );
         const geo = this.makeLeafGeometry();
 
         const leaf = new THREE.Mesh( geo, this.mat );

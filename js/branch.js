@@ -36,7 +36,7 @@ class Branch extends Part {
 
     makeCapsule() {
         // get branch cylinder
-        this.mat = new THREE.MeshPhongMaterial( { color: this.color, shininess: 20, opacity: 1., transparent: false } );
+        this.mat = new THREE.MeshPhongMaterial( { color: this.color, shininess: 20 } );
         const cylinderGeo = new THREE.CylinderGeometry( this.wid, this.wid, this.len, 8);
         
         const cylinder = new THREE.Mesh( cylinderGeo, this.mat );
