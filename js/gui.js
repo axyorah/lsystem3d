@@ -9,6 +9,15 @@ const branchWidLbl = document.querySelector('#branch-width-lbl');
 const branchColor = document.querySelector('#branch-color');
 const branchColorLbl = document.querySelector('#branch-color-lbl');
 
+const leafLenRng = document.querySelector('#leaf-length');
+const leafLenLbl = document.querySelector('#leaf-length-lbl');
+const leafWidRng = document.querySelector('#leaf-width');
+const leafWidLbl = document.querySelector('#leaf-width-lbl');
+const leafDepRng = document.querySelector('#leaf-depth');
+const leafDepLbl = document.querySelector('#leaf-depth-lbl');
+const leafColor = document.querySelector('#leaf-color');
+const leafColorLbl = document.querySelector('#leaf-color-lbl');
+
 const yawRng = document.querySelector('#yaw');
 const yawLbl = document.querySelector('#yaw-lbl');
 const pitchRng = document.querySelector('#pitch');
@@ -18,6 +27,7 @@ const rollLbl = document.querySelector('#roll-lbl');
 
 const ruleXInpt = document.querySelector('#rule-X');
 const ruleFInpt = document.querySelector('#rule-F');
+const ruleLInpt = document.querySelector('#rule-L');
 
 
 undoBtn.addEventListener('click', function (evt) {
@@ -61,6 +71,35 @@ branchColor.addEventListener('change', function (evt) {
     lsys.setBranchColor( val );    
 })
 
+leafLenRng.addEventListener('input', function (evt) {
+    // recall: branchWid represents a fraction [0,1] from branchLen
+    const val = this.value;
+    leafLenLbl.innerText = `${leafLenLbl.innerText.split(':')[0]}: ${val}`;
+    lsys.setLeafLen( parseFloat(val) );
+    lsys.updateConfig();
+})
+
+leafWidRng.addEventListener('input', function (evt) {
+    // recall: branchWid represents a fraction [0,1] from branchLen
+    const val = this.value;
+    leafWidLbl.innerText = `${leafWidLbl.innerText.split(':')[0]}: ${val}`;
+    lsys.setLeafWid( parseFloat(val) );
+    lsys.updateConfig();
+})
+
+leafDepRng.addEventListener('input', function (evt) {
+    // recall: branchWid represents a fraction [0,1] from branchLen
+    const val = this.value;
+    leafDepLbl.innerText = `${leafDepLbl.innerText.split(':')[0]}: ${val}`;
+    lsys.setLeafDep( parseFloat(val) );
+    lsys.updateConfig();
+})
+
+leafColor.addEventListener('change', function (evt) {
+    const val = this.value;
+    lsys.setLeafColor( val );    
+})
+
 yawRng.addEventListener('input', function (evt) {
     const val = this.value;
     yawLbl.innerText = `${yawLbl.innerText.split(':')[0]}: ${val}`;
@@ -95,6 +134,16 @@ ruleXInpt.addEventListener('change', function (evt) {
 ruleFInpt.addEventListener('change', function (evt) {
     const val = this.value;
     lsys.setRules( 'F', val );
+
+    const steps = lsys._states.length - 1;
+    lsys.reset();+
+    lsys.incrementState( steps );
+    lsys.draw();
+})
+
+ruleLInpt.addEventListener('change', function (evt) {
+    const val = this.value;
+    lsys.setRules( 'L', val );
 
     const steps = lsys._states.length - 1;
     lsys.reset();

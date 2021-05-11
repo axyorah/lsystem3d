@@ -6,7 +6,7 @@ class LSystem {
         this._branchWid0 = 0.1;
         this._branchLen = 1;
         this._branchWid = 0.1;
-        this._branchColor = 0xFFAA00;
+        this._branchColor = 0x006D70;
 
         this._leafLen0 = 1;
         this._leafWid0 = 0.1;
@@ -14,7 +14,7 @@ class LSystem {
         this._leafLen = 1;
         this._leafWid = 0.1;
         this._leafDep = 0.1;
-        this._leafColor = 0x00FF00;
+        this._leafColor = 0xFE04C6;
 
         this._angleYaw = 25;   // - +
         this._anglePitch = 35; // ^ v

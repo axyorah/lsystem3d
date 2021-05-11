@@ -50,17 +50,37 @@
                 <span class="input-group-text"><code>F</code></span>
                 <input type="text" class="form-control" id="rule-F" 
                     placeholder="Fb+F[X]" aria-label="rule for F">
-            </div>          
+            </div> 
+            
+            <div class="input-group input-group-sm mb-1">
+                <span class="input-group-text"><code>L</code></span>
+                <input type="text" class="form-control" id="rule-L" 
+                    placeholder="L" aria-label="rule for L">
+            </div>
         </div>
 
         <div id="branch-stuff" class="gui-box">
-            <p><b>Branch</b></p>
-            <label id="branch-length-lbl" for="branch-lenght">Branch Length:</label>
+            <p class="d-flex justify-content-between">
+                <b>Branch</b>
+                <input type="color" value=0x006D70 id="branch-color" name="branch-color">
+            </p>
+            <label id="branch-length-lbl" for="branch-lenght">Length:</label>
             <input type="range" min="0.5" max="5" step="0.1" value="1" id="branch-length" name="branch-length">
-            <label id="branch-width-lbl" for="branch-width">Branch Width (as fraction of Length):</label>
+            <label id="branch-width-lbl" for="branch-width">Width (frac. of Length):</label>
             <input type="range" min="0.01" max="1" step="0.01" value="0.1" id="branch-width" name="branch-width">
-            <label id="branch-color-lbl" for="branch-color">Branch Color:</label>
-            <input type="color" value=0xFFAA00 id="branch-color" name="branch-color">
+        </div>
+
+        <div id="leaf-stuff" class="gui-box">
+            <p class="d-flex justify-content-between">
+                <b>Leaf</b>
+                <input type="color" value=0xFE04C6 id="leaf-color" name="leaf-color">
+            </p>
+            <label id="leaf-length-lbl" for="leaf-lenght"> Length:</label>
+            <input type="range" min="0.5" max="5" step="0.1" value="1" id="leaf-length" name="leaf-length">
+            <label id="leaf-width-lbl" for="leaf-width">Width:</label>
+            <input type="range" min="0.01" max="1" step="0.01" value="0.1" id="leaf-width" name="leaf-width">
+            <label id="leaf-depth-lbl" for="leaf-depth">Depth:</label>
+            <input type="range" min="0.01" max="1" step="0.01" value="0.1" id="leaf-depth" name="leaf-depth">
         </div>
 
         <div id="angle-stuff" class="gui-box">
