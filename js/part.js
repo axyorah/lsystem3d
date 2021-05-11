@@ -125,7 +125,7 @@ class Part {
 
     rescale( x, y, z ) {
         // rescale the part to fit new dimensions
-        this.obj.scale.set( x / this._wid0, y / this._len0, z, this._dep0 );
+        this.obj.scale.set( x / this._wid0, y / this._len0, z / this._dep0 );
     }
 
     recolor( color ) {
