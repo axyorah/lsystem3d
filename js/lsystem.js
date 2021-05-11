@@ -101,7 +101,7 @@ class LSystem {
         // returns THREE.Object3D() with name 'branch'
         // consisting of 'branch-capsule' (THREE.Object3D()) and 'axes' (THREE.Object3D())
         // 'branch-capsule' consists of cylinder mesh and two sphere meshes
-        const brancher = new Brancher( );
+        const brancher = new Branch( );
         brancher.makeBranch();
         brancher.rescale( this.branchWid, this.branchLen, this.branchWid );
         brancher.orient( this.turtle.obj.quaternion );

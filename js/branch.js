@@ -1,4 +1,4 @@
-class Brancher {
+class Branch {
     constructor( len=1., wid=0.1, color=0xFFAA00 ) {
         this._len0 = len;
         this._wid0 = wid;
