@@ -8,6 +8,14 @@ class LSystem {
         this._branchWid = 0.1;
         this._branchColor = 0xFFAA00;
 
+        this._leafLen0 = 1;
+        this._leafWid0 = 0.1;
+        this._leafDep0 = 0.05;
+        this._leafLen = 1;
+        this._leafWid = 0.1;
+        this._leafDep = 0.1;
+        this._leafColor = 0x00FF00;
+
         this._angleYaw = 25;   // - +
         this._anglePitch = 35; // ^ v
         this._angleRoll = 35;  // d b
@@ -16,8 +24,9 @@ class LSystem {
         this._steps = 0;
         this._states = [this.axiom];
         this._rules = {
-            'X': '[^FF+X]b[^F+X]bv',
+            'X': '[^F[^+L][^-L]F+X]b[^F+X]bv',
             'F': 'Fb+F[X]',
+            'L': 'L',
             '[': '[',
             ']': ']',
             '+': '+',
@@ -33,11 +42,21 @@ class LSystem {
 
     get axiom() { return this._axiom; }
     get states() { return this._states; }
+
     get branchLen() { return this._branchLen; }
     get branchWid() { return this._branchWid; }
     get branchLen0() { return this._branchLen0; }
     get branchWid0() { return this._branchWid0; }
     get branchColor() { return this._branchColor; }
+
+    get leafLen() { return this._leafLen; }
+    get leafWid() { return this._leafWid; }
+    get leafDep() { return this._leafDep; }
+    get leafLen0() { return this._leafLen0; }
+    get leafWid0() { return this._leafWid0; }
+    get leafDep0() { return this._leafDep0; }    
+    get leafColor() { return this._leafColor; }
+    
     get angleYaw() { return this._angleYaw; }
     get anglePitch() { return this._anglePitch; }
     get angleRoll() { return this._angleRoll; }
@@ -60,6 +79,27 @@ class LSystem {
             }
         } )
     }
+
+    setLeafLen( val ) { this._leafLen = val; }
+    setLeafWid( val ) { this._leafWid = val; }
+    setLeafDep( val ) { this._leafDep = val; }
+    setLeafLen0( val ) { this._leafLen0 = val; }
+    setLeafWid0( val ) { this._leafWid0 = val; }
+    setLeafDep0( val ) { this._leafDep0 = val; }
+    setLeafColor( val ) {
+        this._leafColor = val;
+        const segments = this.obj.children[0].children;
+        segments.map( (segment) => {
+            if ( segment.name === 'leaf' ) {
+                segment.children.map( (child) => {
+                    if ( child.name === 'leaf-capsule' ) { 
+                        child.children.map( (primitive) => primitive.material.color.set(val) );
+                    }
+                } )
+            }
+        } )
+    }
+
     setAngleYaw( val ) { this._angleYaw = val; }
     setAnglePitch( val ) { this._anglePitch = val; }
     setAngleRoll( val ) { this._angleRoll = val; }
@@ -117,12 +157,12 @@ class LSystem {
         //   |-- 'branch-capsule' (THREE.Object3D())
         //   |     |-- 'branch-cylinder' (THREE.Mesh) oriented along y-axis
         //   |     |-- 'branch-edge-low' [sphere] (THREE.Mesh)
-        //   |     |-- 'branch-edge-high' [sphere] (THREE.Mesh)
+        //   |     +-- 'branch-edge-high' [sphere] (THREE.Mesh)
         //   | 
         //   |-- 'axes' (THREE.Object3D())
-        //         |-- 'fwd' (THREE.Mesh)
-        //         |-- 'top' (THREE.Mesh)
-        //         |-- 'side' (THREE.Mesh)
+        //         |-- 'fwd' (THREE.Line)
+        //         |-- 'top' (THREE.Line)
+        //         +-- 'side' (THREE.Line)
         // To rescale branch we could do something like:
         //     this.obj.scale.set( this.branchWid / this.branchWid0, this.branchLen / this.branchLen0, this.branchWid / this.branchWid0 );
         // but this distorts the edges;
@@ -134,9 +174,21 @@ class LSystem {
         const sphere1 = branch.children[0].children[1];
         const sphere2 = branch.children[0].children[2];
 
-        cylinder.scale.set( this.branchWid / this.branchWid0, this.branchLen / this.branchLen0, this.branchWid / this.branchWid0 );
-        sphere1.scale.set( this.branchWid / this.branchWid0, this.branchWid / this.branchWid0, this.branchWid / this.branchWid0 );
-        sphere2.scale.set( this.branchWid / this.branchWid0, this.branchWid / this.branchWid0, this.branchWid / this.branchWid0 );
+        cylinder.scale.set( 
+            this.branchWid / this.branchWid0, 
+            this.branchLen / this.branchLen0, 
+            this.branchWid / this.branchWid0 
+        );
+        sphere1.scale.set( 
+            this.branchWid / this.branchWid0, 
+            this.branchWid / this.branchWid0, 
+            this.branchWid / this.branchWid0 
+        );
+        sphere2.scale.set( 
+            this.branchWid / this.branchWid0, 
+            this.branchWid / this.branchWid0, 
+            this.branchWid / this.branchWid0 
+        );
 
         cylinder.position.set(0, this.branchLen/2, 0);
         sphere2.position.set(0, this.branchLen, 0);
@@ -148,10 +200,35 @@ class LSystem {
         branch.position.set( p.x, p.y, p.z );
     }
 
+    getNewLeaf() {
+        // creates new leaf with dimensions specified by 'this' parameters
+        const leafer = new Leaf();
+        leafer.makeLeaf();
+
+        leafer.rescale( this.leafWid, this.leafLen, this.leafDep );
+        leafer.orient( this.turtle.obj.quaternion );
+        leafer.moveTo( this.turtle.position );
+        leafer.recolor( this.leafColor );
+
+        return leafer.obj;
+    }
+
+    updateExistingLeaf( leaf ) {
+        // leaf is a THREE.Object3D() object
+        const p = this.turtle.position.clone();
+        const q = this.turtle.obj.quaternion.clone(); 
+        leaf.scale.set(  
+            0.5 * this.leafWid / this.leafWid0, 
+            1.0 * this.leafLen / this.leafLen0, 
+            0.5 * this.leafDep / this.leafDep0 )
+        leaf.quaternion.set( q.x, q.y, q.z, q.w );
+        leaf.position.set( p.x, p.y, p.z );
+    }
+
     draw() {
         // creates new geometry;
         // use it if lsystem state has been incremented or rules have been changed
-        let branch, leaf; // TODO: leaf
+        let branch, leaf;
         
         // reset turtle
         this.turtle.reset();
@@ -173,6 +250,12 @@ class LSystem {
                 obj.add( branch );
                 this.turtle.forward( this.branchLen );
             }
+            if (sym === 'L') {                 
+                leaf = this.getNewLeaf();
+
+                obj.add( leaf );
+                this.turtle.forward( this.leafLen ); // this should never be needed... 
+            }
             else if (sym === '+') this.turtle.yawBy( this.angleYaw * Math.PI / 180 )
             else if (sym === '-') this.turtle.yawBy(-this.angleYaw * Math.PI / 180 )
             else if (sym === '^') this.turtle.pitchBy( this.anglePitch * Math.PI / 180 )
@@ -187,7 +270,8 @@ class LSystem {
                 roll_stack.push( this.turtle.roll );
             }
             else if (sym === ']') {
-                if ( pos_stack.length > 0 && quaternion_stack.length > 0 && yaw_stack.length > 0 && pitch_stack.length > 0 && roll_stack.length > 0) {
+                if ( pos_stack.length > 0 && quaternion_stack.length > 0 && 
+                     yaw_stack.length > 0 && pitch_stack.length > 0 && roll_stack.length > 0) {
                     this.turtle.moveTo( pos_stack.pop() );
                     this.turtle.orient( quaternion_stack.pop(), yaw_stack.pop(), pitch_stack.pop(), roll_stack.pop() );
                 }
@@ -222,16 +306,23 @@ class LSystem {
         let roll_stack = [];
 
         let segments = this.obj.children[0].children; // each segment: branch-capsule + axes
-        let iBranch = 0;
+        let iSegment = 0;
 
         // update existing geometries
         for (let sym of this.states[this.states.length-1]) {
             if (sym === 'F') { 
-                if ( segments[iBranch].name === 'branch' ) {
-                    this.updateExistingBranch( segments[iBranch] );
-                    iBranch += 1;
+                if ( segments[iSegment].name === 'branch' ) {
+                    this.updateExistingBranch( segments[iSegment] );
+                    iSegment += 1;
                 }
                 this.turtle.forward( this.branchLen );
+            }
+            if (sym === 'L') { 
+                if ( segments[iSegment].name === 'leaf' ) {
+                    this.updateExistingLeaf( segments[iSegment] );
+                    iSegment += 1;
+                }
+                this.turtle.forward( this.leafLen );
             }
             else if (sym === '+') this.turtle.yawBy( this.angleYaw * Math.PI / 180 )
             else if (sym === '-') this.turtle.yawBy(-this.angleYaw * Math.PI / 180 )

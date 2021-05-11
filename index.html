@@ -43,7 +43,7 @@
             <div class="input-group input-group-sm mb-1">
                 <span class="input-group-text"><code>X</code></span>
                 <input type="text" class="form-control" id="rule-X" 
-                    placeholder="[^FF+X]b[^F+X]bv" aria-label="rule for X">                                
+                    placeholder="[^F[^+L][^-L]F+X]b[^F+X]bv" aria-label="rule for X">                                
             </div>
 
             <div class="input-group input-group-sm mb-1">
@@ -54,7 +54,7 @@
         </div>
 
         <div id="branch-stuff" class="gui-box">
-            <p><b>Branch Dimensions</b></p>
+            <p><b>Branch</b></p>
             <label id="branch-length-lbl" for="branch-lenght">Branch Length:</label>
             <input type="range" min="0.5" max="5" step="0.1" value="1" id="branch-length" name="branch-length">
             <label id="branch-width-lbl" for="branch-width">Branch Width (as fraction of Length):</label>
