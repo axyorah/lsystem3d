@@ -8,11 +8,11 @@ class LSystem {
         this._branchWid = 0.1;
         this._branchColor = 0x006D70;
 
-        this._leafLen0 = 1;
-        this._leafWid0 = 0.1;
-        this._leafDep0 = 0.05;
-        this._leafLen = 1;
-        this._leafWid = 0.1;
+        this._leafLen0 = 1; // should be the same as default in Leaf constructor
+        this._leafWid0 = 0.25;
+        this._leafDep0 = 0.1;
+        this._leafLen = 2;
+        this._leafWid = 0.25;
         this._leafDep = 0.1;
         this._leafColor = 0xFE04C6;
 
@@ -218,9 +218,9 @@ class LSystem {
         const p = this.turtle.position.clone();
         const q = this.turtle.obj.quaternion.clone(); 
         leaf.scale.set(  
-            0.5 * this.leafWid / this.leafWid0, 
-            1.0 * this.leafLen / this.leafLen0, 
-            0.5 * this.leafDep / this.leafDep0 )
+            this.leafWid / this.leafWid0, 
+            this.leafLen / this.leafLen0, 
+            this.leafDep / this.leafDep0 )
         leaf.quaternion.set( q.x, q.y, q.z, q.w );
         leaf.position.set( p.x, p.y, p.z );
     }
