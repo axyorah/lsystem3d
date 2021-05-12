@@ -26,16 +26,16 @@ function getGrid() {
 
 function fillScene() {
     scene = new THREE.Scene();
-    scene.fog = new THREE.Fog(0x808080, 200, 400);
+    scene.fog = new THREE.Fog(0xA030F0, 35, 80);
 
     // LIGHTS
-    const ambientLight = new THREE.AmbientLight(0x222222);
+    const ambientLight = new THREE.AmbientLight(0x555555);
 
-    const light1 = new THREE.DirectionalLight(0xffffff, 1);
+    const light1 = new THREE.DirectionalLight(0xFFFFFF, 1);
     light1.position.set(-500, 0, 500);
     light1.castShadow = true;
 
-    const light2 = new THREE.DirectionalLight(0xffffff, 0.6);
+    const light2 = new THREE.DirectionalLight(0xFFFFFF, 0.6);
     light2.position.set(0, 0, 500);
     light2.castShadow = true;
 
@@ -66,13 +66,12 @@ function setRenderer(w, h) {
 
 function setCamera(ratio) {
     camera = new THREE.PerspectiveCamera(40, ratio, 1, 10000);
-    camera.position.set(-5.17, 7.44, 28.93);
+    camera.position.set(0, 7, 30);
 }
 
 function setControls() {
     cameraControls = new THREE.OrbitControls(camera, renderer.domElement);
-    //cameraControls.target.set(2.24, 0.03, 0.15);
-    cameraControls.target.set(0,0,0);
+    cameraControls.target.set(0, 9, -5);
 }
 
 function init() {
