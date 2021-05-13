@@ -1,3 +1,10 @@
+function getGrid() {
+    const size = 100;
+    const divisions = 100;
+    
+    return new THREE.GridHelper( size, divisions, 0x49E6FF, 0x49E6FF );
+}
+
 function addFloatingRocktToScene( scene ) {
     const loader = new THREE.GLTFLoader();
     const textureLoader = new THREE.TextureLoader();

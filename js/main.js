@@ -17,13 +17,6 @@ function getSkybox() {
     return textureCube;
 }
 
-function getGrid() {
-    const size = 100;
-    const divisions = 100;
-    
-    return new THREE.GridHelper( size, divisions, 0x49E6FF, 0x49E6FF );
-}
-
 function fillScene() {
     scene = new THREE.Scene();
     scene.fog = new THREE.Fog(0xA030F0, 50, 90);
