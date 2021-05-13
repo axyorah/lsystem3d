@@ -26,7 +26,7 @@ function getGrid() {
 
 function fillScene() {
     scene = new THREE.Scene();
-    scene.fog = new THREE.Fog(0xA030F0, 35, 80);
+    scene.fog = new THREE.Fog(0xA030F0, 50, 90);
 
     // LIGHTS
     const ambientLight = new THREE.AmbientLight(0x555555);
@@ -49,6 +49,7 @@ function fillScene() {
     // GROUND
     const ground = getGrid();
     scene.add(ground);
+    //addFloatingRocktToScene( scene ); // alternatively place a floating rock underneath the plant
 
     // LSYSTEM + TURTLE
     turtle = new Turtle();
@@ -66,7 +67,7 @@ function setRenderer(w, h) {
 
 function setCamera(ratio) {
     camera = new THREE.PerspectiveCamera(40, ratio, 1, 10000);
-    camera.position.set(0, 7, 30);
+    camera.position.set(0, 7, 40); // 30?
 }
 
 function setControls() {
