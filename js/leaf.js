@@ -99,13 +99,19 @@ class Leaf extends Part {
             faceNormalsV3[3],
         ];
 
-        // write vertex normals as an array of coordinates (for front side AND back side)
+        // write vertex normals as an array of coordinates // opted out from using it, as it looks too smooth...
         let normals = [];
-        for ( let i=0; i < 6; i++ ) {
-            normals.push(...[ vertexNormalsV3[i].x,  vertexNormalsV3[i].y,  vertexNormalsV3[i].z]); // front
-        }
-        for ( let i=0; i < 6; i++ ) {
-            normals.push(...[-vertexNormalsV3[i].x, -vertexNormalsV3[i].y, -vertexNormalsV3[i].z]); // back
+        // // this generates too smooth leaves...
+        // for ( let face of faceIndices ) {
+        //     for (let ptIdx of face ) {
+        //         normals.push(...[vertexNormalsV3[ptIdx].x, vertexNormalsV3[ptIdx].y, vertexNormalsV3[ptIdx].z]);
+        //     }
+        // }
+        // this generates proper low-poly leaves
+        for ( let faceNormal of faceNormalsV3 ) {
+            for ( let i=0; i<3; i++ ) {
+                normals.push(...[faceNormal.x, faceNormal.y, faceNormal.z]);
+            }
         }
 
         geo.setAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
