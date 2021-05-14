@@ -29,6 +29,9 @@ const ruleXInpt = document.querySelector('#rule-X');
 const ruleFInpt = document.querySelector('#rule-F');
 const ruleLInpt = document.querySelector('#rule-L');
 
+const rulePopup = document.querySelector('#rule-popup');
+const rulePopupLbl = document.querySelector('#rule-popup-lbl');
+
 
 undoBtn.addEventListener('click', function (evt) {
     lsys.undoState();
@@ -149,4 +152,9 @@ ruleLInpt.addEventListener('change', function (evt) {
     lsys.reset();
     lsys.incrementState( steps );
     lsys.draw();
+})
+
+rulePopupLbl.addEventListener('click', function (evt) {
+    rulePopup.classList.toggle('show');
+    console.log('popup clicked!');
 })

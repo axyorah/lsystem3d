@@ -86,3 +86,45 @@ input[type="text"] {
 #button-undo:hover, #button-restart:hover, #button-update:hover {
     opacity: 1;
 }
+
+code {
+    color: #49E6FF;
+    font-weight: bold;
+}
+
+/*rule-legend popup*/
+.popup {
+    display: inline-block;
+    cursor: pointer;
+}
+
+.popup .popuptext {
+    position: absolute;
+    visibility: hidden;
+    width: 200px;
+    left: min(100%, 210px);
+    margin-left: 50px;
+    padding: 6px;
+    background-color: rgba(0,0,0,0.4);
+    color: #fff;
+    text-align: left;
+    border-radius: 6px;
+}
+
+/* Toggle this class when clicking on the popup container (hide and show the popup) */
+.popup .show {
+    visibility: visible;
+    -webkit-animation: fadeIn 1s;
+    animation: fadeIn 1s
+}
+  
+/* Add animation (fade in the popup) */
+@-webkit-keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+  
+@keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity:1 ;}
+}

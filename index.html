@@ -10,10 +10,11 @@
     <script src="./node_modules/three/examples/js/controls/OrbitControls.js"></script>
     <script src="./node_modules/three/examples/js/loaders/GLTFLoader.js"></script>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet" 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css"  
         integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0" crossorigin="anonymous">
     <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap" rel="stylesheet"> 
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -22,41 +23,46 @@
     <div id="gui" class="gui-box">
         
         <div id="rules-stuff" class="gui-box">
-            <p><b>Rules</b></p>
+            <p>
+                <b>Rules</b>
+                <span class="popup" id="rule-popup-lbl">
+                    <i class="fa fa-question-circle"></i>
+                    <span class="popuptext" id="rule-popup">
+                        <b>Symbols:</b><br><br>
+                        <code>X</code> : seed (not visible)<br>
+                        <code>F</code> : branch<br>
+                        <code>L</code> : leaf<br>
+                        <code>[</code> : make a record of the current position and orientation<br>
+                        <code>]</code> : recall to the last recorded position and orientation<br>
+                        <code>+</code> : yaw to the left<br>
+                        <code>-</code> : yaw to the right<br>
+                        <code>^</code> : pitch forward<br>
+                        <code>v</code> : pitch backward<br>
+                        <code>d</code> : roll counterclockwise<br>
+                        <code>b</code> : roll clockwise<br>
+                    </span>
+                </span>               
+            </p>
 
-            <div id="rule-legend" style="display: none;">
-            <p>Symbols:</p>
-            <div>
-                <p><code>X</code>: seed</p>
-                <p><code>F</code>: branch</p>
-                <p><code>[</code>: make a record of the current position and orientation</p>
-                <p><code>]</code>: return to the last recorded position and orientation</p>
-                <p><code>+</code>: yaw to the left</p>
-                <p><code>-</code>: yaw to the right</p>
-                <p><code>^</code>: pitch to forward</p>
-                <p><code>v</code>: pitch backward</p>
-                <p><code>d</code>: roll counterclockwise</p>
-                <p><code>b</code>: roll clockwise</p>
-            </div>
-            </div>
+            
             
             <span id="axiom-lbl">Axiom: <code>X</code></span>
             
             <p>Rules: </p>
             <div class="input-group input-group-sm mb-1">
-                <span class="input-group-text"><code>X</code></span>
+                <span class="input-group-text"><b>X</b></span>
                 <input type="text" class="form-control" id="rule-X" 
                     value="[^F[^+L][^-L]F+X]b[^F+X]bv" aria-label="rule for X">                                
             </div>
 
             <div class="input-group input-group-sm mb-1">
-                <span class="input-group-text"><code>F</code></span>
+                <span class="input-group-text"><b>F</b></span>
                 <input type="text" class="form-control" id="rule-F" 
                     value="Fb+F[X]" aria-label="rule for F">
             </div> 
             
             <div class="input-group input-group-sm mb-1">
-                <span class="input-group-text"><code>L</code></span>
+                <span class="input-group-text"><b>L</b></span>
                 <input type="text" class="form-control" id="rule-L" 
                     value="L" aria-label="rule for L">
             </div>
