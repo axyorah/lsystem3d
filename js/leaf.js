@@ -59,15 +59,16 @@ class Leaf extends Part {
             pts.push( new THREE.Vector3( coord[0] * this.wid, coord[1] * this.len, coord[2] * this.dep) );
         }
 
+        // edge = [edgeBegin, edgeEnd]
         const edgeIndices = [
-            [1,0], [2,1], [3,2], [4,3], [5,4], [0,5], [2,0], [6,0], [4,0], [2,6], [3,6], [4,6]
+            [0,1], [1,2], [2,3], [3,4], [4,5], [5,0], [0,2], [0,6], [0,4], [6,2], [6,3], [6,4]
         ];
         let edges = [];
         for ( let edge of edgeIndices ) {
             edges.push( new THREE.Vector3( 
-                pts[edge[0]].x - pts[edge[1]].x, 
-                pts[edge[0]].y - pts[edge[1]].y,
-                pts[edge[0]].z - pts[edge[1]].z
+                pts[edge[1]].x - pts[edge[0]].x, 
+                pts[edge[1]].y - pts[edge[0]].y,
+                pts[edge[1]].z - pts[edge[0]].z
             ) );
         }
 
@@ -90,34 +91,9 @@ class Leaf extends Part {
             new THREE.Vector3().crossVectors( edges[8], edges[5].clone().multiplyScalar(-1) ).normalize()
         ];
 
-        // get vertex normals as averages of face normals // opted out from using it, as it looks too smooth...
-        const vertexNormalsV3 = [
-            new THREE.Vector3(0,0,0)
-                .add( faceNormalsV3[0] ).add( faceNormalsV3[1] ).add( faceNormalsV3[4] ).add( faceNormalsV3[5] )
-                .multiplyScalar(0.25),
-            faceNormalsV3[0],
-            new THREE.Vector3(0,0,0)
-                .add( faceNormalsV3[0] ).add( faceNormalsV3[1] ).add( faceNormalsV3[2] )
-                .multiplyScalar(1/3),
-            new THREE.Vector3(0,0,0).add( faceNormalsV3[2] ).add( faceNormalsV3[3] ).multiplyScalar(0.5),
-            new THREE.Vector3(0,0,0)
-                .add( faceNormalsV3[3] ).add( faceNormalsV3[4] ).add( faceNormalsV3[5] )
-                .multiplyScalar(1/3),
-            faceNormalsV3[5],
-            new THREE.Vector3(0,0,0)
-                .add( faceNormalsV3[1] ).add( faceNormalsV3[2] ).add( faceNormalsV3[3] ).add( faceNormalsV3[4] )
-                .multiplyScalar(0.25)
-        ];
-
-        // write vertex normals as an array of coordinates (for front side AND back side)
+        // write vertex normals as an array of coordinates for each face;
+        // use the same order for normals as was used for vertices ('position' attribute)
         let normals = [];
-        // // this generates too smooth leaves...
-        // for ( let face of faceIndices ) {
-        //     for (let ptIdx of face ) {
-        //         normals.push(...[vertexNormalsV3[ptIdx].x, vertexNormalsV3[ptIdx].y, vertexNormalsV3[ptIdx].z]);
-        //     }
-        // }
-        // // this generates proper low-poly leaves
         for ( let faceNormal of faceNormalsV3 ) {
             for ( let i=0; i<3; i++ ) {
                 normals.push(...[faceNormal.x, faceNormal.y, faceNormal.z]);
