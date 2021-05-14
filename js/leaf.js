@@ -107,18 +107,28 @@ class Leaf extends Part {
     }
 
     makeCapsule() {
+        // make leaf
         this.mat = new THREE.MeshPhongMaterial( { 
             color: this.color, shininess: 20, side: THREE.DoubleSide 
         } );
-        const geo = this.makeLeafGeometry();
+        const leafGeo = this.makeLeafGeometry();
 
-        const leaf = new THREE.Mesh( geo, this.mat );
+        const leaf = new THREE.Mesh( leafGeo, this.mat );
         leaf.castShadow = true; 
         leaf.receiveShadow = true;
+
+        // make petiole
+        const petioleGeo = new THREE.BufferGeometry().setFromPoints([
+            new THREE.Vector3(0,0,0),
+            new THREE.Vector3(0,0.25, 0)
+        ]);
+        const petioleMat = new THREE.LineBasicMaterial({ color: this.color });
+        const petiole = new THREE.Line( petioleGeo, petioleMat ); 
         
-        // add all leaf parts into a leaf capsule
+        // add all leaf parts to leaf capsule
         const capsule = new THREE.Object3D();
         capsule.add(leaf);
+        capsule.add(petiole);
         capsule.name = 'leaf-capsule';
 
         return capsule
