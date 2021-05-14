@@ -38,20 +38,21 @@ class Leaf extends Part {
         /*
         assemble leaf geometry from the following scheme:
 
-              pts           edges         faces
-              * 3             *             *
-                          3 / | \ 2       / | \
-           * 4   * 2       *  7  *       * 2|1 *
-                         4 |8 | 6| 1     |. | .|
-           * 5   * 1       * .|. *       * .|. *
-                          5 \ . / 0       \3.0/ 
-              * 0             *             *
+              pts             edges           faces
+               * 3              *               *
+                           3 / 10  \ 2       /3 | 2\
+           * 4    * 2       * 11| 9 *       * . | . *
+               * 6        4 |.  *  .| 1     |.4 * 1.|
+           * 5    * 1       * 8 7 6 *       * . | . *
+                           5 \ ... / 0       \5...0/ 
+               * 0              *               *
         */
         const geo = new THREE.BufferGeometry();
 
         const ptCoords = [
             [0.00, 0.25, 0.00], [ 0.70, 0.33, 0.40], [ 1.00, 0.60, 1.00], 
-            [0.00, 1.00, 0.00], [-1.00, 0.60, 1.00], [-0.70, 0.33, 0.40]
+            [0.00, 1.00, 1.00], [-1.00, 0.60, 1.00], [-0.70, 0.33, 0.40], 
+            [0.00, 0.75, 0.00]
         ];
         let pts = [];
         for ( let coord of ptCoords ) {
@@ -59,7 +60,7 @@ class Leaf extends Part {
         }
 
         const edgeIndices = [
-            [1,0], [2,1], [3,2], [4,3], [5,4], [0,5], [2,0], [3,0], [4,0]
+            [1,0], [2,1], [3,2], [4,3], [5,4], [0,5], [2,0], [6,0], [4,0], [2,6], [3,6], [4,6]
         ];
         let edges = [];
         for ( let edge of edgeIndices ) {
@@ -71,7 +72,7 @@ class Leaf extends Part {
         }
 
         // get face vertices
-        const faceIndices = [[0,1,2], [0,2,3], [0,3,4], [0,4,5]];
+        const faceIndices = [[0,1,2], [0,2,6], [6,2,3], [6,3,4], [0,6,4], [0,4,5]];
         let vertices = [];
         for ( let face of faceIndices ) {
             for (let ptIdx of face ) {
@@ -81,25 +82,34 @@ class Leaf extends Part {
 
         // get face normals
         const faceNormalsV3 = [
-            new THREE.Vector3().crossVectors( edges[1], edges[0].clone().multiplyScalar(-1) ).normalize(),
-            new THREE.Vector3().crossVectors( edges[2], edges[6].clone().multiplyScalar(-1) ).normalize(),
-            new THREE.Vector3().crossVectors( edges[8].clone().multiplyScalar(-1), edges[3].clone().multiplyScalar(-1) ).normalize(),
-            new THREE.Vector3().crossVectors( edges[5], edges[4].clone().multiplyScalar(-1) ).normalize()
+            new THREE.Vector3().crossVectors( edges[0], edges[6] ).normalize(),
+            new THREE.Vector3().crossVectors( edges[6], edges[7] ).normalize(),
+            new THREE.Vector3().crossVectors( edges[9], edges[10] ).normalize(),
+            new THREE.Vector3().crossVectors( edges[10], edges[11] ).normalize(),
+            new THREE.Vector3().crossVectors( edges[7], edges[8] ).normalize(),
+            new THREE.Vector3().crossVectors( edges[8], edges[5].clone().multiplyScalar(-1) ).normalize()
         ];
 
-        // get vertex normals as averages of face normals
+        // get vertex normals as averages of face normals // opted out from using it, as it looks too smooth...
         const vertexNormalsV3 = [
             new THREE.Vector3(0,0,0)
-                .add( faceNormalsV3[0] ).add( faceNormalsV3[1] ).add( faceNormalsV3[2] ).add( faceNormalsV3[3] )
+                .add( faceNormalsV3[0] ).add( faceNormalsV3[1] ).add( faceNormalsV3[4] ).add( faceNormalsV3[5] )
                 .multiplyScalar(0.25),
             faceNormalsV3[0],
-            new THREE.Vector3(0,0,0).add( faceNormalsV3[0] ).add( faceNormalsV3[1] ).multiplyScalar(0.5),
-            new THREE.Vector3(0,0,0).add( faceNormalsV3[1] ).add( faceNormalsV3[2] ).multiplyScalar(0.5),
+            new THREE.Vector3(0,0,0)
+                .add( faceNormalsV3[0] ).add( faceNormalsV3[1] ).add( faceNormalsV3[2] )
+                .multiplyScalar(1/3),
             new THREE.Vector3(0,0,0).add( faceNormalsV3[2] ).add( faceNormalsV3[3] ).multiplyScalar(0.5),
-            faceNormalsV3[3],
+            new THREE.Vector3(0,0,0)
+                .add( faceNormalsV3[3] ).add( faceNormalsV3[4] ).add( faceNormalsV3[5] )
+                .multiplyScalar(1/3),
+            faceNormalsV3[5],
+            new THREE.Vector3(0,0,0)
+                .add( faceNormalsV3[1] ).add( faceNormalsV3[2] ).add( faceNormalsV3[3] ).add( faceNormalsV3[4] )
+                .multiplyScalar(0.25)
         ];
 
-        // write vertex normals as an array of coordinates // opted out from using it, as it looks too smooth...
+        // write vertex normals as an array of coordinates (for front side AND back side)
         let normals = [];
         // // this generates too smooth leaves...
         // for ( let face of faceIndices ) {
@@ -107,7 +117,7 @@ class Leaf extends Part {
         //         normals.push(...[vertexNormalsV3[ptIdx].x, vertexNormalsV3[ptIdx].y, vertexNormalsV3[ptIdx].z]);
         //     }
         // }
-        // this generates proper low-poly leaves
+        // // this generates proper low-poly leaves
         for ( let faceNormal of faceNormalsV3 ) {
             for ( let i=0; i<3; i++ ) {
                 normals.push(...[faceNormal.x, faceNormal.y, faceNormal.z]);
