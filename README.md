@@ -10,20 +10,6 @@ Check demo [here](https://sleepy-bastion-18703.herokuapp.com/).
 - [This Project](#this-project)
 - [Installation](#installation)
 
-<
-Plants' growth - can be compactly described with a set of rules
-
-L-Systems - mathematical formalism to describe plant growth
-
-L-System - in a context of of language models and Chomsky grammars
-Simple example
-
-L-System - graphical interpretation
-Turtle graphics
-
-L-System in 3D - more degrees of freedom
->
-
 ## L-Systems <a name="lsystem"></a>
 
 Despite the fact that many plants have rather convoluted structures, development of theses structures over time can be described by conveniently simple rules. Mathematical framework that captures these rules was developed in 1968 by Astrid Lindenmayer and is known as the **L-System**.
