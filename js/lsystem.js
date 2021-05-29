@@ -48,6 +48,7 @@ class LSystem {
     get branchWid() { return this._branchWid; }
     get branchLen0() { return this._branchLen0; }
     get branchWid0() { return this._branchWid0; }
+    get ratio() { return this._ratio; }
     get branchColor() { return this._branchColor; }
 
     get leafLen() { return this._leafLen; }
@@ -65,6 +66,7 @@ class LSystem {
 
     setBranchLen( val ) { this._branchLen = val; }
     setBranchWid( val ) { this._branchWid = val; }
+    setRatio( val ) { this._ratio = val; } 
     setBranchLen0( val ) { this._branchLen0 = val; }
     setBranchWid0( val ) { this._branchWid0 = val; }
     setBranchColor( val ) {
@@ -142,9 +144,9 @@ class LSystem {
         // returns THREE.Object3D() with name 'branch'
         // consisting of 'branch-capsule' (THREE.Object3D()) and 'axes' (THREE.Object3D())
         // 'branch-capsule' consists of cylinder mesh and two sphere meshes
-        const brancher = new Branch( len, wid );
+        const brancher = new Branch();
         brancher.makeBranch();
-        brancher.rescale( wid, len, wid );//this.branchWid, this.branchLen, this.branchWid );
+        brancher.rescale( wid, len, wid );
         brancher.orient( this.turtle.obj.quaternion );
         brancher.moveTo( this.turtle.position );
         brancher.recolor( this.branchColor );
@@ -152,7 +154,7 @@ class LSystem {
         return brancher.obj;
     }
 
-    updateExistingBranch( branch ) {
+    updateExistingBranch( branch, lvl=0 ) {
         // branch is a THREE.Object3D() with the following structure:
         // 'branch' (THREE.Object3D())
         //   |-- 'branch-capsule' (THREE.Object3D())
@@ -176,19 +178,19 @@ class LSystem {
         const sphere2 = branch.children[0].children[2];
 
         cylinder.scale.set( 
-            this.branchWid / this.branchWid0, 
+            this.branchWid / this.branchWid0 * Math.pow(this.ratio, lvl), 
             this.branchLen / this.branchLen0, 
-            this.branchWid / this.branchWid0 
+            this.branchWid / this.branchWid0 * Math.pow(this.ratio, lvl)
         );
         sphere1.scale.set( 
-            this.branchWid / this.branchWid0, 
-            this.branchWid / this.branchWid0, 
-            this.branchWid / this.branchWid0 
+            this.branchWid / this.branchWid0 * Math.pow(this.ratio, lvl), 
+            this.branchWid / this.branchWid0 * Math.pow(this.ratio, lvl), 
+            this.branchWid / this.branchWid0 * Math.pow(this.ratio, lvl) 
         );
         sphere2.scale.set( 
-            this.branchWid / this.branchWid0, 
-            this.branchWid / this.branchWid0, 
-            this.branchWid / this.branchWid0 
+            this.branchWid / this.branchWid0 * Math.pow(this.ratio, lvl), 
+            this.branchWid / this.branchWid0 * Math.pow(this.ratio, lvl), 
+            this.branchWid / this.branchWid0 * Math.pow(this.ratio, lvl) 
         );
 
         cylinder.position.set(0, this.branchLen/2, 0);
@@ -249,7 +251,7 @@ class LSystem {
         for (let sym of this.states[this.states.length-1]) {
             if (sym === 'F') {
                 //console.log( this.branchWid * Math.pow(this._ratio, lvl) );
-                branch = this.getNewBranch( this.branchLen, this.branchWid * Math.pow(this._ratio, lvl) );
+                branch = this.getNewBranch( this.branchLen, this.branchWid * Math.pow(this.ratio, lvl) );
                 lvl += 1;
 
                 obj.add( branch );
@@ -311,16 +313,19 @@ class LSystem {
         let yaw_stack = [];
         let pitch_stack = [];
         let roll_stack = [];
+        let lvl_stack = [];
 
         let segments = this.obj.children[0].children; // each segment: branch-capsule + axes
         let iSegment = 0;
+        let lvl = 0;
 
         // update existing geometries
         for (let sym of this.states[this.states.length-1]) {
             if (sym === 'F') { 
                 if ( segments[iSegment].name === 'branch' ) {
-                    this.updateExistingBranch( segments[iSegment] );
+                    this.updateExistingBranch( segments[iSegment], lvl );
                     iSegment += 1;
+                    lvl += 1;
                 }
                 this.turtle.forward( this.branchLen );
             }
@@ -343,11 +348,13 @@ class LSystem {
                 yaw_stack.push( this.turtle.yaw );
                 pitch_stack.push( this.turtle.pitch );
                 roll_stack.push( this.turtle.roll );
+                lvl_stack.push( lvl );
             }
             else if (sym === ']') {
                 if ( pos_stack.length > 0 && quaternion_stack.length > 0 && yaw_stack.length > 0 && pitch_stack.length > 0 && roll_stack.length > 0) {
                     this.turtle.moveTo( pos_stack.pop() );
                     this.turtle.orient( quaternion_stack.pop(), yaw_stack.pop(), pitch_stack.pop(), roll_stack.pop() );
+                    lvl = lvl_stack.pop();
                 }
             }
         }
