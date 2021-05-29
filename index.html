@@ -20,9 +20,9 @@
 <body>
     <div class="container" id="container"></div>
 
-    <div id="gui" class="gui-box">
+    <div id="gui" class="gui-box accordion">
         
-        <div id="rules-stuff" class="gui-box">
+        <div id="rules-stuff" class="gui-box accordion-item">
             <p>
                 <b>Rules</b>
                 <span class="popup" id="rule-popup-lbl">
@@ -66,43 +66,73 @@
             </div>
         </div>
 
-        <div id="branch-stuff" class="gui-box">
-            <p class="d-flex justify-content-between">
-                <b>Branch</b>
-                <input type="color" value=0x006D70 id="branch-color" name="branch-color">
+        <div id="branch-stuff" class="gui-box accordion-item">
+            <p class="accordion-header w-100" id="branch-header">                
+                <button class="accordion-button box w-100" type="button" data-bs-toggle="collapse" 
+                    data-bs-target="#branch-collapse" aria-expanded="false" aria-controls="branch-collapse">
+                    <span class="d-flex w-100 justify-content-between">
+                        <b>Branch</b>
+                        <input type="color" value=0x006D70 id="branch-color" name="branch-color">
+                    </span>                    
+                </button>
             </p>
-            <label id="branch-length-lbl" for="branch-lenght">Length:</label>
-            <input type="range" min="0.5" max="5" step="0.1" value="1" id="branch-length" name="branch-length">
-            <label id="branch-width-lbl" for="branch-width">Width (frac. of Length):</label>
-            <input type="range" min="0.01" max="1" step="0.01" value="0.1" id="branch-width" name="branch-width">
-            <label id="branch-ratio-lbl" for="branch-ratio">Top-to-bottom width ratio:</label>
-            <input type="range" min="0.5" max="1" step="0.01" value="1" id="branch-ratio" name="branch-ratio">
+            <div id="branch-collapse" class="accordion-collapse collapse show px-0 w-100" aria-labelledby="branch-header" data-bs-parent="#gui">
+                <div class="accordion-body px-0 w-100">
+                    <label id="branch-length-lbl" for="branch-lenght">Length:</label>
+                    <input type="range" min="0.5" max="5" step="0.1" value="1" id="branch-length" name="branch-length">
+                    <label id="branch-width-lbl" for="branch-width">Width (frac. of Length):</label>
+                    <input type="range" min="0.01" max="1" step="0.01" value="0.1" id="branch-width" name="branch-width">
+                    <label id="branch-ratio-lbl" for="branch-ratio">Top-to-bottom width ratio:</label>
+                    <input type="range" min="0.5" max="1" step="0.01" value="1" id="branch-ratio" name="branch-ratio">
+                </div>
+            </div>
         </div>
 
-        <div id="leaf-stuff" class="gui-box">
-            <p class="d-flex justify-content-between">
-                <b>Leaf</b>
-                <input type="color" value=0xFE04C6 id="leaf-color" name="leaf-color">
+        <div id="leaf-stuff" class="gui-box accordion-item">
+            <p class="accordion-header w-100" id="leaf-header">                
+                <button class="accordion-button box w-100" type="button" data-bs-toggle="collapse" 
+                    data-bs-target="#leaf-collapse" aria-expanded="false" aria-controls="leaf-collapse">
+                    <span class="d-flex w-100 justify-content-between">
+                        <b>Leaf</b>
+                        <input type="color" value=0xFE04C6 id="leaf-color" name="leaf-color">
+                    </span>                    
+                </button>
             </p>
-            <label id="leaf-length-lbl" for="leaf-lenght"> Length:</label>
-            <input type="range" min="0.5" max="5" step="0.1" value="2" id="leaf-length" name="leaf-length">
-            <label id="leaf-width-lbl" for="leaf-width">Width:</label>
-            <input type="range" min="0.01" max="1" step="0.01" value="0.25" id="leaf-width" name="leaf-width">
-            <label id="leaf-depth-lbl" for="leaf-depth">Depth:</label>
-            <input type="range" min="0.01" max="1" step="0.01" value="0.1" id="leaf-depth" name="leaf-depth">
+            <div id="leaf-collapse" class="accordion-collapse collapse show px-0 w-100" aria-labelledby="leaf-header" data-bs-parent="#gui">
+                <div class="accordion-body px-0 w-100">
+                    <label id="leaf-length-lbl" for="leaf-lenght"> Length:</label>
+                    <input type="range" min="0.5" max="5" step="0.1" value="2" id="leaf-length" name="leaf-length">
+                    <label id="leaf-width-lbl" for="leaf-width">Width:</label>
+                    <input type="range" min="0.01" max="1" step="0.01" value="0.25" id="leaf-width" name="leaf-width">
+                    <label id="leaf-depth-lbl" for="leaf-depth">Depth:</label>
+                    <input type="range" min="0.01" max="1" step="0.01" value="0.1" id="leaf-depth" name="leaf-depth">
+                </div>
+            </div>
         </div>
 
-        <div id="angle-stuff" class="gui-box">
-            <p><b>Angles</b></p>
-            <label id="yaw-lbl" for="yaw">Yaw <code>+-</code></label>
-            <input type="range" min="0" max="90" step="1" value="25" id="yaw" name="yaw">
-            <label id="pitch-lbl" for="pitch">Pitch <code>^v</code></label>
-            <input type="range" min="0" max="90" step="1" value="35" id="pitch" name="pitch">
-            <label id="roll-lbl" for="roll">Roll <code>db</code></label>
-            <input type="range" min="0" max="90" step="1" value="35" id="roll" name="roll">
+        <div id="angle-stuff" class="gui-box accordion-item">
+            <p class="accordion-header w-100" id="angle-header">                
+                <button class="accordion-button box w-100" type="button" data-bs-toggle="collapse" 
+                    data-bs-target="#angle-collapse" aria-expanded="false" aria-controls="angle-collapse">
+                    <span class="d-flex w-100 justify-content-between">
+                        <b>Angles</b>
+                    </span>                    
+                </button>
+            </p>
+            <div id="angle-collapse" class="accordion-collapse collapse show px-0 w-100" aria-labelledby="angle-header" data-bs-parent="#gui">
+                <div class="accordion-body px-0 w-100">
+                    <label id="yaw-lbl" for="yaw">Yaw <code>+-</code></label>
+                    <input type="range" min="0" max="90" step="1" value="25" id="yaw" name="yaw">
+                    <label id="pitch-lbl" for="pitch">Pitch <code>^v</code></label>
+                    <input type="range" min="0" max="90" step="1" value="35" id="pitch" name="pitch">
+                    <label id="roll-lbl" for="roll">Roll <code>db</code></label>
+                    <input type="range" min="0" max="90" step="1" value="35" id="roll" name="roll">
+                </div>
+            </div>
         </div>
 
     </div>
+    
 
     <div id="buttons" class="btn-group" role="group">
         <button type="button" id="button-undo" class="btn btn-dark"><span title="undo">&#8630;</span></button>

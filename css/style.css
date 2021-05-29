@@ -34,19 +34,25 @@
     font-family: 'Roboto', 'Sans Serif';
     font-size: 1em;
     color: white;
-    border: 1px solid white;
     border-radius: 5px;
     padding: 3px;
     outline: none;
-    background-color: rgba(85, 85, 85, 0.9);
-    border: 1px solid white;
-    margin-top: 5px;
+    background-color: rgba(0,0,0,0.3);
+    border: none;
+    margin-top: 0px;
     width: 100%;
     transition: 0.4;
 }
 
 .box:hover {
-    background-color: rgb(65, 65, 65);
+    background-color: rgba(0,0,0,0.5);
+    color: white;
+    border: none;
+}
+
+.box:enabled {
+    background-color: rgba(0,0,0,0.3);
+    border: none;
 }
 
 .btn {
@@ -60,6 +66,10 @@ input[type="file"] {
 
 input[type="text"] {
     width: 85%;
+}
+
+input[type="range"] {
+    width: 100%;
 }
 
 #texupload-container {
