@@ -48,6 +48,10 @@ class Part {
         return sidePos.add( this.capsule.position.clone().multiplyScalar( -1 ) ).normalize();
     }
 
+    setWid( wid ) { this._wid = wid; }
+    setLen( len ) { this._len = len; }
+    setDep( dep ) { this._dep = dep; }
+
     makeUnitLine() {
         // returns red vertical unit line 
         const points = [new THREE.Vector3( 0, -0.5, 0 ), new THREE.Vector3( 0, 0.5, 0 )];

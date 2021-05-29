@@ -1,7 +1,7 @@
 class Branch extends Part {
-    constructor( len=1., wid=0.1, color=0xFFAA00, ratio=0.6 ) {
+    constructor( len=1., wid=0.1, color=0xFFAA00, ratio=1. ) {
         super( len, wid, wid, color );
-        this.ratio = ratio;
+        this._ratio = ratio;
         
         /* 
         // recall: Part class contains the following attributes:
@@ -35,10 +35,29 @@ class Branch extends Part {
         */
     }
 
+    get ratio() { return this._ratio; }
+    setRatio( val ) { this._ratio = val; }
+
+    changeRatio( val ) {
+        const branch = this.obj;
+
+        const cylinder = branch.children[0].children[0];
+        const sphere1 = branch.children[0].children[1];
+        const sphere2 = branch.children[0].children[2];
+
+        // replace cylinder geometry entirely...
+        cylinder.geometry = new THREE.CylinderGeometry( this.wid * val, this.wid, this.len, 8);
+
+        // rescale top sphere
+        sphere2.scale.set( sphere1.scale.x * val, sphere1.scale.y * val, sphere1.scale.z * val );
+
+        this.setRatio( val );
+    }
+
     makeCapsule() {
         // get branch cylinder
         this.mat = new THREE.MeshPhongMaterial( { color: this.color, shininess: 20 } );
-        const cylinderGeo = new THREE.CylinderGeometry( this.wid * this.ratio, this.wid, this.len, 8);
+        const cylinderGeo = new THREE.CylinderGeometry( this.wid * this.ratio, this.wid, this.len, 8);  
         
         const cylinder = new THREE.Mesh( cylinderGeo, this.mat );
         cylinder.name = 'branch-cylinder';
@@ -102,6 +121,9 @@ class Branch extends Part {
         // but this distorts the edges;
         // we want the edges to remain perfect spheres at all scales,
         // so we only rescale the cylinder
+        //this.setWid( x );
+        //this.setLen( y );
+
         const branch = this.obj;
 
         const cylinder = branch.children[0].children[0];

@@ -4,10 +4,11 @@ class LSystem {
         
         this._branchLen0 = 1;
         this._branchWid0 = 0.1;
+        this._branchRatio0 = 1;
         this._branchLen = 1;
         this._branchWid = 0.1;
+        this._branchRatio = 1.;
         this._branchColor = 0x006D70;
-        this._branchRatio = 0.6;
 
         this._leafLen0 = 1; // should be the same as default in Leaf constructor
         this._leafWid0 = 0.25;
@@ -68,7 +69,10 @@ class LSystem {
     setBranchWid( val ) { this._branchWid = val; }
     setBranchLen0( val ) { this._branchLen0 = val; }
     setBranchWid0( val ) { this._branchWid0 = val; }
-    setBranchRatio( val ) { this._branchRatio = val; } 
+    setBranchRatio( val ) { 
+        this._branchRatio0 = this._branchRatio;
+        this._branchRatio = val; 
+    } 
     setBranchColor( val ) {
         this._branchColor = val;
         const segments = this.obj.children[0].children;
@@ -149,8 +153,10 @@ class LSystem {
         const zs = this.branchWid * Math.pow(this.branchRatio, lvl);
 
         const brancher = new Branch();
+        //brancher.setRatio( this.branchRatio ); // set ratio before making branch!
         brancher.makeBranch();
         brancher.rescale( xs, ys, zs );
+        brancher.changeRatio( this.branchRatio );
         brancher.orient( this.turtle.obj.quaternion );
         brancher.moveTo( this.turtle.position );
         brancher.recolor( this.branchColor );
@@ -175,20 +181,22 @@ class LSystem {
         // but this distorts the edges;
         // we want the edges to remain perfect spheres at all scales,
         // so we only rescale the cylinder
+        const cylinder = branch.children[0].children[0];
+        const sphere1 = branch.children[0].children[1];
+        const sphere2 = branch.children[0].children[2];
+        
+        // change top-to-bottom width ratio (for cylinder)
+        cylinder.geometry = new THREE.CylinderGeometry(this.branchWid0 * this.branchRatio, this.branchWid0, this.branchLen0, 8);
         
         // rescale
         const xs = this.branchWid / this.branchWid0 * Math.pow(this.branchRatio, lvl);
         const ys = this.branchLen / this.branchLen0;
         const zs = this.branchWid / this.branchWid0 * Math.pow(this.branchRatio, lvl);
 
-        const cylinder = branch.children[0].children[0];
-        const sphere1 = branch.children[0].children[1];
-        const sphere2 = branch.children[0].children[2];
-
         cylinder.scale.set( xs, ys, zs );
         sphere1.scale.set(  xs, xs, xs );
-        sphere2.scale.set( xs, xs, xs );
-
+        sphere2.scale.set( xs * this.branchRatio, xs * this.branchRatio, xs * this.branchRatio ); // top-to-bottom width ratio!
+        
         cylinder.position.set(0, this.branchLen/2, 0);
         sphere2.position.set(0, this.branchLen, 0);
 
@@ -197,6 +205,7 @@ class LSystem {
         const q = this.turtle.obj.quaternion.clone(); 
         branch.quaternion.set( q.x, q.y, q.z, q.w );
         branch.position.set( p.x, p.y, p.z );
+
     }
 
     getNewLeaf() {

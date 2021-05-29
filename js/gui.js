@@ -6,6 +6,8 @@ const branchLenRng = document.querySelector('#branch-length');
 const branchLenLbl = document.querySelector('#branch-length-lbl');
 const branchWidRng = document.querySelector('#branch-width');
 const branchWidLbl = document.querySelector('#branch-width-lbl');
+const branchRatioRng = document.querySelector('#branch-ratio');
+const branchRatioLbl = document.querySelector('#branch-ratio-lbl');
 const branchColor = document.querySelector('#branch-color');
 const branchColorLbl = document.querySelector('#branch-color-lbl');
 
@@ -66,7 +68,13 @@ branchWidRng.addEventListener('input', function (evt) {
     branchWidLbl.innerText = `${branchWidLbl.innerText.split(':')[0]}: ${fraction}`;
     lsys.setBranchWid( parseFloat(val) );
     lsys.updateConfig();
-    //lsys.draw();
+})
+
+branchRatioRng.addEventListener('input', function (evt) {
+    const val  = this.value;
+    branchRatioLbl.innerText = `${branchRatioLbl.innerText.split(':')[0]}: ${val}`;
+    lsys.setBranchRatio( parseFloat(val) );
+    lsys.updateConfig();
 })
 
 branchColor.addEventListener('change', function (evt) {
@@ -139,7 +147,7 @@ ruleFInpt.addEventListener('change', function (evt) {
     lsys.setRules( 'F', val );
 
     const steps = lsys._states.length - 1;
-    lsys.reset();+
+    lsys.reset();
     lsys.incrementState( steps );
     lsys.draw();
 })
