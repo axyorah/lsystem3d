@@ -137,13 +137,16 @@ class LSystem {
         return this._states[this._states.length - 1]
     }
 
-    getNewBranch( len=1., wid=.1 ) {
+    getNewBranch( lvl=0 ) {
         // creates new branch with dimensions specified by 'this' parameters;
         // we first make a default(!) branch and move/orient/scale(!!!)/color it later
         // otherwise scale references for 'updateConfig()' become a bit less straightforward...
         // returns THREE.Object3D() with name 'branch'
         // consisting of 'branch-capsule' (THREE.Object3D()) and 'axes' (THREE.Object3D())
         // 'branch-capsule' consists of cylinder mesh and two sphere meshes
+        let len = this.branchLen;
+        let wid = this.branchWid * Math.pow(this.ratio, lvl);
+
         const brancher = new Branch();
         brancher.makeBranch();
         brancher.rescale( wid, len, wid );
@@ -250,8 +253,7 @@ class LSystem {
         // make new geometries
         for (let sym of this.states[this.states.length-1]) {
             if (sym === 'F') {
-                //console.log( this.branchWid * Math.pow(this._ratio, lvl) );
-                branch = this.getNewBranch( this.branchLen, this.branchWid * Math.pow(this.ratio, lvl) );
+                branch = this.getNewBranch( lvl );
                 lvl += 1;
 
                 obj.add( branch );
