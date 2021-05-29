@@ -1,6 +1,7 @@
 class Branch extends Part {
-    constructor( len=1., wid=0.1, color=0xFFAA00 ) {
-        super( len, wid, 0.1, color );
+    constructor( len=1., wid=0.1, color=0xFFAA00, ratio=0.6 ) {
+        super( len, wid, wid, color );
+        this.ratio = ratio;
         
         /* 
         // recall: Part class contains the following attributes:
@@ -37,7 +38,7 @@ class Branch extends Part {
     makeCapsule() {
         // get branch cylinder
         this.mat = new THREE.MeshPhongMaterial( { color: this.color, shininess: 20 } );
-        const cylinderGeo = new THREE.CylinderGeometry( this.wid, this.wid, this.len, 8);
+        const cylinderGeo = new THREE.CylinderGeometry( this.wid * this.ratio, this.wid, this.len, 8);
         
         const cylinder = new THREE.Mesh( cylinderGeo, this.mat );
         cylinder.name = 'branch-cylinder';
@@ -46,13 +47,13 @@ class Branch extends Part {
         cylinder.castShadow = true;
 
         // get spherical branch edges (so that the final branch looks like a capsule)
-        const sphereGeo = new THREE.SphereGeometry( this.wid, 8, 8);
-        
-        const sphereLow = new THREE.Mesh( sphereGeo, this.mat );
+        const sphereGeoLow = new THREE.SphereGeometry( this.wid, 8, 8);        
+        const sphereLow = new THREE.Mesh( sphereGeoLow, this.mat );
         sphereLow.name = 'branch-edge-low';
         sphereLow.position.set(0, 0, 0);
-        
-        const sphereHigh = new THREE.Mesh( sphereGeo, this.mat );
+
+        const sphereGeoHigh = new THREE.SphereGeometry( this.wid * this.ratio, 8, 8);
+        const sphereHigh = new THREE.Mesh( sphereGeoHigh, this.mat );
         sphereHigh.name = 'branch-edge-high'
         sphereHigh.position.set(0, this.len, 0);
         

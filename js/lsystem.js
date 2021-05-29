@@ -7,6 +7,7 @@ class LSystem {
         this._branchLen = 1;
         this._branchWid = 0.1;
         this._branchColor = 0x006D70;
+        this._ratio = 0.6;
 
         this._leafLen0 = 1; // should be the same as default in Leaf constructor
         this._leafWid0 = 0.25;
@@ -134,16 +135,16 @@ class LSystem {
         return this._states[this._states.length - 1]
     }
 
-    getNewBranch() {
+    getNewBranch( len=1., wid=.1 ) {
         // creates new branch with dimensions specified by 'this' parameters;
         // we first make a default(!) branch and move/orient/scale(!!!)/color it later
         // otherwise scale references for 'updateConfig()' become a bit less straightforward...
         // returns THREE.Object3D() with name 'branch'
         // consisting of 'branch-capsule' (THREE.Object3D()) and 'axes' (THREE.Object3D())
         // 'branch-capsule' consists of cylinder mesh and two sphere meshes
-        const brancher = new Branch( );
+        const brancher = new Branch( len, wid );
         brancher.makeBranch();
-        brancher.rescale( this.branchWid, this.branchLen, this.branchWid );
+        brancher.rescale( wid, len, wid );//this.branchWid, this.branchLen, this.branchWid );
         brancher.orient( this.turtle.obj.quaternion );
         brancher.moveTo( this.turtle.position );
         brancher.recolor( this.branchColor );
@@ -229,6 +230,7 @@ class LSystem {
         // creates new geometry;
         // use it if lsystem state has been incremented or rules have been changed
         let branch, leaf;
+        let lvl = 0;
         
         // reset turtle
         this.turtle.reset();
@@ -239,13 +241,16 @@ class LSystem {
         let yaw_stack = [];
         let pitch_stack = [];
         let roll_stack = [];
+        let lvl_stack = [];
         
         // make temp Object3D to store geometry
         const obj = new THREE.Object3D();
         // make new geometries
         for (let sym of this.states[this.states.length-1]) {
-            if (sym === 'F') {                 
-                branch = this.getNewBranch();
+            if (sym === 'F') {
+                //console.log( this.branchWid * Math.pow(this._ratio, lvl) );
+                branch = this.getNewBranch( this.branchLen, this.branchWid * Math.pow(this._ratio, lvl) );
+                lvl += 1;
 
                 obj.add( branch );
                 this.turtle.forward( this.branchLen );
@@ -268,12 +273,14 @@ class LSystem {
                 yaw_stack.push( this.turtle.yaw );
                 pitch_stack.push( this.turtle.pitch );
                 roll_stack.push( this.turtle.roll );
+                lvl_stack.push( lvl );
             }
             else if (sym === ']') {
                 if ( pos_stack.length > 0 && quaternion_stack.length > 0 && 
                      yaw_stack.length > 0 && pitch_stack.length > 0 && roll_stack.length > 0) {
                     this.turtle.moveTo( pos_stack.pop() );
                     this.turtle.orient( quaternion_stack.pop(), yaw_stack.pop(), pitch_stack.pop(), roll_stack.pop() );
+                    lvl = lvl_stack.pop();
                 }
             }
         }
