@@ -7,7 +7,7 @@ class LSystem {
         this._branchLen = 1;
         this._branchWid = 0.1;
         this._branchColor = 0x006D70;
-        this._ratio = 0.6;
+        this._branchRatio = 0.6;
 
         this._leafLen0 = 1; // should be the same as default in Leaf constructor
         this._leafWid0 = 0.25;
@@ -48,7 +48,7 @@ class LSystem {
     get branchWid() { return this._branchWid; }
     get branchLen0() { return this._branchLen0; }
     get branchWid0() { return this._branchWid0; }
-    get ratio() { return this._ratio; }
+    get branchRatio() { return this._branchRatio; }
     get branchColor() { return this._branchColor; }
 
     get leafLen() { return this._leafLen; }
@@ -66,9 +66,9 @@ class LSystem {
 
     setBranchLen( val ) { this._branchLen = val; }
     setBranchWid( val ) { this._branchWid = val; }
-    setRatio( val ) { this._ratio = val; } 
     setBranchLen0( val ) { this._branchLen0 = val; }
     setBranchWid0( val ) { this._branchWid0 = val; }
+    setBranchRatio( val ) { this._branchRatio = val; } 
     setBranchColor( val ) {
         this._branchColor = val;
         const segments = this.obj.children[0].children;
@@ -144,12 +144,13 @@ class LSystem {
         // returns THREE.Object3D() with name 'branch'
         // consisting of 'branch-capsule' (THREE.Object3D()) and 'axes' (THREE.Object3D())
         // 'branch-capsule' consists of cylinder mesh and two sphere meshes
-        let len = this.branchLen;
-        let wid = this.branchWid * Math.pow(this.ratio, lvl);
+        const xs = this.branchWid * Math.pow(this.branchRatio, lvl);
+        const ys = this.branchLen;
+        const zs = this.branchWid * Math.pow(this.branchRatio, lvl);
 
         const brancher = new Branch();
         brancher.makeBranch();
-        brancher.rescale( wid, len, wid );
+        brancher.rescale( xs, ys, zs );
         brancher.orient( this.turtle.obj.quaternion );
         brancher.moveTo( this.turtle.position );
         brancher.recolor( this.branchColor );
@@ -176,25 +177,17 @@ class LSystem {
         // so we only rescale the cylinder
         
         // rescale
+        const xs = this.branchWid / this.branchWid0 * Math.pow(this.branchRatio, lvl);
+        const ys = this.branchLen / this.branchLen0;
+        const zs = this.branchWid / this.branchWid0 * Math.pow(this.branchRatio, lvl);
+
         const cylinder = branch.children[0].children[0];
         const sphere1 = branch.children[0].children[1];
         const sphere2 = branch.children[0].children[2];
 
-        cylinder.scale.set( 
-            this.branchWid / this.branchWid0 * Math.pow(this.ratio, lvl), 
-            this.branchLen / this.branchLen0, 
-            this.branchWid / this.branchWid0 * Math.pow(this.ratio, lvl)
-        );
-        sphere1.scale.set( 
-            this.branchWid / this.branchWid0 * Math.pow(this.ratio, lvl), 
-            this.branchWid / this.branchWid0 * Math.pow(this.ratio, lvl), 
-            this.branchWid / this.branchWid0 * Math.pow(this.ratio, lvl) 
-        );
-        sphere2.scale.set( 
-            this.branchWid / this.branchWid0 * Math.pow(this.ratio, lvl), 
-            this.branchWid / this.branchWid0 * Math.pow(this.ratio, lvl), 
-            this.branchWid / this.branchWid0 * Math.pow(this.ratio, lvl) 
-        );
+        cylinder.scale.set( xs, ys, zs );
+        sphere1.scale.set(  xs, xs, xs );
+        sphere2.scale.set( xs, xs, xs );
 
         cylinder.position.set(0, this.branchLen/2, 0);
         sphere2.position.set(0, this.branchLen, 0);
