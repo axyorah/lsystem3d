@@ -186,7 +186,7 @@ class LSystem {
         const sphere2 = branch.children[0].children[2];
         
         // change top-to-bottom width ratio (for cylinder)
-        cylinder.geometry = new THREE.CylinderGeometry(this.branchWid0 * this.branchRatio, this.branchWid0, this.branchLen0, 8);
+        cylinder.geometry = new THREE.CylinderBufferGeometry(this.branchWid0 * this.branchRatio, this.branchWid0, this.branchLen0, 8);
         
         // rescale
         const xs = this.branchWid / this.branchWid0 * Math.pow(this.branchRatio, lvl);

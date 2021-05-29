@@ -36,28 +36,12 @@ class Branch extends Part {
     }
 
     get ratio() { return this._ratio; }
-    setRatio( val ) { this._ratio = val; }
-
-    changeRatio( val ) {
-        const branch = this.obj;
-
-        const cylinder = branch.children[0].children[0];
-        const sphere1 = branch.children[0].children[1];
-        const sphere2 = branch.children[0].children[2];
-
-        // replace cylinder geometry entirely...
-        cylinder.geometry = new THREE.CylinderGeometry( this.wid * val, this.wid, this.len, 8);
-
-        // rescale top sphere
-        sphere2.scale.set( sphere1.scale.x * val, sphere1.scale.y * val, sphere1.scale.z * val );
-
-        this.setRatio( val );
-    }
+    setRatio( val ) { this._ratio = val; }    
 
     makeCapsule() {
         // get branch cylinder
         this.mat = new THREE.MeshPhongMaterial( { color: this.color, shininess: 20 } );
-        const cylinderGeo = new THREE.CylinderGeometry( this.wid * this.ratio, this.wid, this.len, 8);  
+        const cylinderGeo = new THREE.CylinderBufferGeometry( this.wid * this.ratio, this.wid, this.len, 8);  
         
         const cylinder = new THREE.Mesh( cylinderGeo, this.mat );
         cylinder.name = 'branch-cylinder';
@@ -66,12 +50,12 @@ class Branch extends Part {
         cylinder.castShadow = true;
 
         // get spherical branch edges (so that the final branch looks like a capsule)
-        const sphereGeoLow = new THREE.SphereGeometry( this.wid, 8, 8);        
+        const sphereGeoLow = new THREE.SphereBufferGeometry( this.wid, 8, 8);        
         const sphereLow = new THREE.Mesh( sphereGeoLow, this.mat );
         sphereLow.name = 'branch-edge-low';
         sphereLow.position.set(0, 0, 0);
 
-        const sphereGeoHigh = new THREE.SphereGeometry( this.wid * this.ratio, 8, 8);
+        const sphereGeoHigh = new THREE.SphereBufferGeometry( this.wid * this.ratio, 8, 8);
         const sphereHigh = new THREE.Mesh( sphereGeoHigh, this.mat );
         sphereHigh.name = 'branch-edge-high'
         sphereHigh.position.set(0, this.len, 0);
@@ -136,5 +120,21 @@ class Branch extends Part {
 
         cylinder.position.set(0, y/2, 0);
         sphere2.position.set(0, y, 0);
+    }
+
+    changeRatio( val ) {
+        const branch = this.obj;
+
+        const cylinder = branch.children[0].children[0];
+        const sphere1 = branch.children[0].children[1];
+        const sphere2 = branch.children[0].children[2];
+
+        // replace cylinder geometry entirely...
+        cylinder.geometry = new THREE.CylinderBufferGeometry( this.wid * val, this.wid, this.len, 8);
+
+        // rescale top sphere
+        sphere2.scale.set( sphere1.scale.x * val, sphere1.scale.y * val, sphere1.scale.z * val );
+
+        this.setRatio( val );
     }
 }
