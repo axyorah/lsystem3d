@@ -122,7 +122,12 @@ class Branch extends Part {
         sphere2.position.set(0, y, 0);
     }
 
-    changeRatio( val ) {
+    changeRatio( ratio ) {
+        // change branch's top-to-bottom width ratio
+        // recall: branch's core is not a "true" cylinder, but rather a bisected cone 
+        // with bottom base larger than the upper base;
+        // when top-to-bottom base ratio is changed we need to 
+        // replace cylinder geometry and rescale the top sphere
         const branch = this.obj;
 
         const cylinder = branch.children[0].children[0];
@@ -130,11 +135,11 @@ class Branch extends Part {
         const sphere2 = branch.children[0].children[2];
 
         // replace cylinder geometry entirely...
-        cylinder.geometry = new THREE.CylinderBufferGeometry( this.wid * val, this.wid, this.len, 8);
+        cylinder.geometry = new THREE.CylinderBufferGeometry( this.wid * ratio, this.wid, this.len, 8);
 
         // rescale top sphere
-        sphere2.scale.set( sphere1.scale.x * val, sphere1.scale.y * val, sphere1.scale.z * val );
+        sphere2.scale.set( sphere1.scale.x * ratio, sphere1.scale.y * ratio, sphere1.scale.z * ratio );
 
-        this.setRatio( val );
+        this.setRatio( ratio );
     }
 }

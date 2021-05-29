@@ -153,7 +153,6 @@ class LSystem {
         const zs = this.branchWid * Math.pow(this.branchRatio, lvl);
 
         const brancher = new Branch();
-        //brancher.setRatio( this.branchRatio ); // set ratio before making branch!
         brancher.makeBranch();
         brancher.rescale( xs, ys, zs );
         brancher.changeRatio( this.branchRatio );
@@ -234,7 +233,7 @@ class LSystem {
     }
 
     draw() {
-        // creates new geometry;
+        // creates new buffer geometry;
         // use it if lsystem state has been incremented or rules have been changed
         let branch, leaf;
         let lvl = 0;
@@ -300,7 +299,9 @@ class LSystem {
     }
 
     updateConfig() {
-        // updates the existing geometry;
+        // (mostly) updates the existing geometry;
+        // (when updating branch: new cylinder geometry is added to replace the old one;
+        //  this is only done because it's sometimes needed to change cylinder top-to-bottom width ratio...)
         // use it if dimensions/orientation were changed
 
         // if there's nothing to update - exit
@@ -319,9 +320,9 @@ class LSystem {
         let roll_stack = [];
         let lvl_stack = [];
 
-        let segments = this.obj.children[0].children; // each segment: branch-capsule + axes
+        let segments = this.obj.children[0].children; // each segment: branch-capsule/leaf-capsule + axes
         let iSegment = 0;
-        let lvl = 0;
+        let lvl = 0; // "distance" from root - needed to calculate width of the branches (length assumed const)
 
         // update existing geometries
         for (let sym of this.states[this.states.length-1]) {
