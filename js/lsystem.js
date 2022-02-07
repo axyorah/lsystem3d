@@ -242,12 +242,7 @@ class LSystem {
         this.turtle.reset();
 
         // initiate position/orientation stacks
-        let pos_stack = [];
-        let quaternion_stack = [];
-        let yaw_stack = [];
-        let pitch_stack = [];
-        let roll_stack = [];
-        let lvl_stack = [];
+        const stack = [];
         
         // make temp Object3D to store geometry
         const obj = new THREE.Object3D();
@@ -273,19 +268,21 @@ class LSystem {
             else if (sym === 'd') this.turtle.rollBy( this.angleRoll * Math.PI / 180 )
             else if (sym === 'b') this.turtle.rollBy(-this.angleRoll * Math.PI / 180 )
             else if (sym === '[') {
-                pos_stack.push( this.turtle.position );
-                quaternion_stack.push( this.turtle.obj.quaternion.clone() );
-                yaw_stack.push( this.turtle.yaw );
-                pitch_stack.push( this.turtle.pitch );
-                roll_stack.push( this.turtle.roll );
-                lvl_stack.push( lvl );
+                stack.push({
+                    pos: this.turtle.position,
+                    quaternion: this.turtle.obj.quaternion.clone(),
+                    yaw: this.turtle.yaw,
+                    pitch: this.turtle.pitch,
+                    roll: this.turtle.roll,
+                    lvl: lvl
+                });
             }
             else if (sym === ']') {
-                if ( pos_stack.length > 0 && quaternion_stack.length > 0 && 
-                     yaw_stack.length > 0 && pitch_stack.length > 0 && roll_stack.length > 0) {
-                    this.turtle.moveTo( pos_stack.pop() );
-                    this.turtle.orient( quaternion_stack.pop(), yaw_stack.pop(), pitch_stack.pop(), roll_stack.pop() );
-                    lvl = lvl_stack.pop();
+                if (stack.length > 0) {
+                    const { pos, quaternion, yaw, pitch, roll, lvl: lvlUpdate } = stack.pop();
+                    this.turtle.moveTo(pos);
+                    this.turtle.orient(quaternion, yaw, pitch, roll);
+                    lvl = lvlUpdate;
                 }
             }
         }
@@ -312,13 +309,8 @@ class LSystem {
         // reset turtle
         this.turtle.reset();
 
-        // initiate position/orientation stacks
-        let pos_stack = [];
-        let quaternion_stack = [];
-        let yaw_stack = [];
-        let pitch_stack = [];
-        let roll_stack = [];
-        let lvl_stack = [];
+        // initiate state (position,orientation,lvl) stack
+        const stack = [];
 
         let segments = this.obj.children[0].children; // each segment: branch-capsule/leaf-capsule + axes
         let iSegment = 0;
@@ -347,19 +339,22 @@ class LSystem {
             else if (sym === 'v') this.turtle.pitchBy(-this.anglePitch * Math.PI / 180 )
             else if (sym === 'd') this.turtle.rollBy( this.angleRoll * Math.PI / 180 )
             else if (sym === 'b') this.turtle.rollBy(-this.angleRoll * Math.PI / 180 )
-            else if (sym === '[') {
-                pos_stack.push( this.turtle.position );
-                quaternion_stack.push( this.turtle.obj.quaternion.clone() );
-                yaw_stack.push( this.turtle.yaw );
-                pitch_stack.push( this.turtle.pitch );
-                roll_stack.push( this.turtle.roll );
-                lvl_stack.push( lvl );
+            else if (sym === '[') {                
+                stack.push({
+                    pos: this.turtle.position,
+                    quaternion: this.turtle.obj.quaternion.clone(),
+                    yaw: this.turtle.yaw,
+                    pitch: this.turtle.pitch,
+                    roll: this.turtle.roll,
+                    lvl: lvl
+                });
             }
             else if (sym === ']') {
-                if ( pos_stack.length > 0 && quaternion_stack.length > 0 && yaw_stack.length > 0 && pitch_stack.length > 0 && roll_stack.length > 0) {
-                    this.turtle.moveTo( pos_stack.pop() );
-                    this.turtle.orient( quaternion_stack.pop(), yaw_stack.pop(), pitch_stack.pop(), roll_stack.pop() );
-                    lvl = lvl_stack.pop();
+                if (stack.length > 0) {
+                    const { pos, quaternion, yaw, pitch, roll, lvl: lvlUpdate } = stack.pop();
+                    this.turtle.moveTo(pos);
+                    this.turtle.orient(quaternion, yaw, pitch, roll);
+                    lvl = lvlUpdate;
                 }
             }
         }
