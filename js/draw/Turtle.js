@@ -5,32 +5,12 @@ class Turtle {
         this.obj;  // THREE.Object3D containing turtle's local axes (assigned by makeTurtle())
         this.axes; // turtle's axes: fwd, top and side (THREE.Line)
         this.makeTurtle();
-
-        // // initially turtle's yaw/pitch/roll angles are set to 0
-        // this._yaw = 0.;
-        // this._pitch = 0.;
-        // this._roll = 0.;
     }
 
     get position() {
         // get current turtle's position (THREE.Vector3)
         return this.obj.position.clone();
     }
-
-    // get yaw() {
-    //     // get current turtle's yaw angle (Number)
-    //     return this._yaw;
-    // }
-
-    // get pitch() {
-    //     // get current turtle's pitch angle (Number)
-    //     return this._pitch;
-    // }
-
-    // get roll() {
-    //     // get current turtle's roll angle (Number)
-    //     return this._roll;
-    // }
     
     get fwd() {
         // get turtle's 'fwd' axis (THREE.Vector3) in World coordinates
@@ -143,18 +123,10 @@ class Turtle {
             throw TypeError(`Argument for 'Turtle.orion' should be of type 'THREE.Quaternion' but got ${quaternion}`);
         }
         this.obj.setRotationFromQuaternion( quaternion );
-        
-        // // TODO: adjust yaw/pitch/roll (fugly storing of yaw/pitch/roll for now... should be derived from quaternion)
-        // this._yaw = yaw; 
-        // this._pitch = pitch;
-        // this._roll = roll;
     }
 
     reset () {
         this.obj.position.set(0,0,0);
         this.obj.quaternion.set(0,0,0,1);
-        // this._yaw = 0;
-        // this._pitch = 0;
-        // this._roll = 0;
     }
 }
