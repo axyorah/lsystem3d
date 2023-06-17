@@ -271,9 +271,9 @@ class LSystem {
                 stack.push({
                     pos: this.turtle.position,
                     quaternion: this.turtle.obj.quaternion.clone(),
-                    yaw: this.turtle.yaw,
-                    pitch: this.turtle.pitch,
-                    roll: this.turtle.roll,
+                    // yaw: this.turtle.yaw,
+                    // pitch: this.turtle.pitch,
+                    // roll: this.turtle.roll,
                     lvl: lvl
                 });
             }
@@ -281,7 +281,7 @@ class LSystem {
                 if (stack.length > 0) {
                     const { pos, quaternion, yaw, pitch, roll, lvl: lvlUpdate } = stack.pop();
                     this.turtle.moveTo(pos);
-                    this.turtle.orient(quaternion, yaw, pitch, roll);
+                    this.turtle.orient(quaternion);//, yaw, pitch, roll);
                     lvl = lvlUpdate;
                 }
             }
@@ -343,9 +343,9 @@ class LSystem {
                 stack.push({
                     pos: this.turtle.position,
                     quaternion: this.turtle.obj.quaternion.clone(),
-                    yaw: this.turtle.yaw,
-                    pitch: this.turtle.pitch,
-                    roll: this.turtle.roll,
+                    // yaw: this.turtle.yaw,
+                    // pitch: this.turtle.pitch,
+                    // roll: this.turtle.roll,
                     lvl: lvl
                 });
             }
@@ -353,7 +353,7 @@ class LSystem {
                 if (stack.length > 0) {
                     const { pos, quaternion, yaw, pitch, roll, lvl: lvlUpdate } = stack.pop();
                     this.turtle.moveTo(pos);
-                    this.turtle.orient(quaternion, yaw, pitch, roll);
+                    this.turtle.orient(quaternion);//, yaw, pitch, roll);
                     lvl = lvlUpdate;
                 }
             }

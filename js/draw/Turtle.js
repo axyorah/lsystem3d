@@ -6,10 +6,10 @@ class Turtle {
         this.axes; // turtle's axes: fwd, top and side (THREE.Line)
         this.makeTurtle();
 
-        // initially turtle's yaw/pitch/roll angles are set to 0
-        this._yaw = 0.;
-        this._pitch = 0.;
-        this._roll = 0.;
+        // // initially turtle's yaw/pitch/roll angles are set to 0
+        // this._yaw = 0.;
+        // this._pitch = 0.;
+        // this._roll = 0.;
     }
 
     get position() {
@@ -17,20 +17,20 @@ class Turtle {
         return this.obj.position.clone();
     }
 
-    get yaw() {
-        // get current turtle's yaw angle (Number)
-        return this._yaw;
-    }
+    // get yaw() {
+    //     // get current turtle's yaw angle (Number)
+    //     return this._yaw;
+    // }
 
-    get pitch() {
-        // get current turtle's pitch angle (Number)
-        return this._pitch;
-    }
+    // get pitch() {
+    //     // get current turtle's pitch angle (Number)
+    //     return this._pitch;
+    // }
 
-    get roll() {
-        // get current turtle's roll angle (Number)
-        return this._roll;
-    }
+    // get roll() {
+    //     // get current turtle's roll angle (Number)
+    //     return this._roll;
+    // }
     
     get fwd() {
         // get turtle's 'fwd' axis (THREE.Vector3) in World coordinates
@@ -58,19 +58,19 @@ class Turtle {
 
     yawBy( angle ) {
         // change turtle's yaw angle by rotating turtle around 'top' axis by a given angle (Number, radians)
-        this._yaw += angle;
+        // this._yaw += angle;
         this.obj.rotateOnWorldAxis( this.top, angle );
     }
 
     pitchBy( angle ) {
         // change turtle's pitch angle by rotating turtle around 'side' axis by a given angle (Number, radians)
-        this._pitch += angle;
+        // this._pitch += angle;
         this.obj.rotateOnWorldAxis( this.side, angle );
     }
 
     rollBy( angle ) {
         // change turtle's roll angle by rotating turtle around 'fwd' axis by a given angle (Number, radians)
-        this._roll += angle;
+        // this._roll += angle;
         this.obj.rotateOnWorldAxis( this.fwd, angle );
     }
 
@@ -136,7 +136,7 @@ class Turtle {
         this.obj.position.set( position.x, position.y, position.z );
     }
 
-    orient( quaternion, yaw, pitch, roll ) {
+    orient( quaternion ) { //, yaw, pitch, roll ) {
         // orient the object as specified by the quaternion (THREE.Quaternion);
         // as a fugly temp(!!!) fix - also pass yaw/pitch/roll (each is a Number)
         if ( !(quaternion instanceof( THREE.Quaternion )) ) {
@@ -144,17 +144,17 @@ class Turtle {
         }
         this.obj.setRotationFromQuaternion( quaternion );
         
-        // TODO: adjust yaw/pitch/roll (fugly storing of yaw/pitch/roll for now... should be derived from quaternion)
-        this._yaw = yaw; 
-        this._pitch = pitch;
-        this._roll = roll;
+        // // TODO: adjust yaw/pitch/roll (fugly storing of yaw/pitch/roll for now... should be derived from quaternion)
+        // this._yaw = yaw; 
+        // this._pitch = pitch;
+        // this._roll = roll;
     }
 
     reset () {
         this.obj.position.set(0,0,0);
         this.obj.quaternion.set(0,0,0,1);
-        this._yaw = 0;
-        this._pitch = 0;
-        this._roll = 0;
+        // this._yaw = 0;
+        // this._pitch = 0;
+        // this._roll = 0;
     }
 }
