@@ -139,7 +139,7 @@ class Leaf extends Part {
         this.capsule = this.makeCapsule();
 
         // leaf axes        
-        this.axes = this.makeAxes( visibleAxes ); // defined in Part class
+        this.axes = makeAxes( visibleAxes ); // defined in Part class
 
         // combine capsule + axes into final object
         this.obj = new THREE.Object3D();

@@ -52,44 +52,6 @@ class Part {
     setLen( len ) { this._len = len; }
     setDep( dep ) { this._dep = dep; }
 
-    makeUnitLine() {
-        // returns red vertical unit line 
-        const points = [new THREE.Vector3( 0, -0.5, 0 ), new THREE.Vector3( 0, 0.5, 0 )];
-        
-        const geometry = new THREE.BufferGeometry().setFromPoints( points );
-        const material = new THREE.LineBasicMaterial({ color: 0xFF0000 });
-
-        return new THREE.Line( geometry, material );
-    }
-
-    makeAxes( visible=false ) {     
-        // create axes object (THREE.Object3D) containing initial fwd, top and side axes (each is THREE.Line)   
-        const fwd = this.makeUnitLine();
-        fwd.position.set(0, 1, 0);
-        fwd.name = 'fwd';
-
-        const top = this.makeUnitLine();
-        top.rotateX( Math.PI / 2 );
-        top.position.set(0, 0.5, 0.5);
-        top.material.color.set(0x0000FF);
-        top.name = 'top';
-
-        const side = this.makeUnitLine();
-        side.rotateZ( Math.PI / 2 );
-        side.position.set(0.5, 0.5, 0);
-        side.material.color.set(0x00FF00);
-        side.name = 'side';
-
-        const axes = new THREE.Object3D();
-        axes.add(fwd);
-        axes.add(top);
-        axes.add(side);
-        axes.name = 'axes';
-        axes.visible = visible;
-
-        return axes;
-    }
-
     makeCapsule() {
         const capsule = new THREE.Object3D();
 
@@ -101,7 +63,7 @@ class Part {
         this.capsule = this.makeCapsule();
 
         // axes        
-        this.axes = this.makeAxes( visibleAxes );
+        this.axes = makeAxes( visibleAxes );
 
         // combine capsule + axes into final object
         this.obj = new THREE.Object3D();

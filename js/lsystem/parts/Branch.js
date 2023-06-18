@@ -39,35 +39,7 @@ class Branch extends Part {
     setRatio( val ) { this._ratio = val; }    
 
     makeCapsule() {
-        // get branch cylinder
-        this.mat = new THREE.MeshPhongMaterial( { color: this.color, shininess: 20 } );
-        const cylinderGeo = new THREE.CylinderBufferGeometry( this.wid * this.ratio, this.wid, this.len, 8);  
-        
-        const cylinder = new THREE.Mesh( cylinderGeo, this.mat );
-        cylinder.name = 'branch-cylinder';
-
-        cylinder.position.set(0, this.len/2, 0);
-        cylinder.castShadow = true;
-
-        // get spherical branch edges (so that the final branch looks like a capsule)
-        const sphereGeoLow = new THREE.SphereBufferGeometry( this.wid, 8, 8);        
-        const sphereLow = new THREE.Mesh( sphereGeoLow, this.mat );
-        sphereLow.name = 'branch-edge-low';
-        sphereLow.position.set(0, 0, 0);
-
-        const sphereGeoHigh = new THREE.SphereBufferGeometry( this.wid * this.ratio, 8, 8);
-        const sphereHigh = new THREE.Mesh( sphereGeoHigh, this.mat );
-        sphereHigh.name = 'branch-edge-high'
-        sphereHigh.position.set(0, this.len, 0);
-        
-        // combine cylinder + 2 spheres into a capsule (branch)
-        const capsule = new THREE.Object3D();
-        capsule.add(cylinder);
-        capsule.add(sphereLow);
-        capsule.add(sphereHigh);
-        capsule.name = 'branch-capsule';
-
-        return capsule
+        return new Capsule(this.len, this.wid, this.ratio, this.color);
     }
 
     makeBranch( visibleAxes=false ) {
@@ -75,7 +47,7 @@ class Branch extends Part {
         this.capsule = this.makeCapsule();
 
         // branch axes        
-        this.axes = this.makeAxes( visibleAxes ); // defined in Part class
+        this.axes = makeAxes( visibleAxes ); // defined in Part class
 
         // combine capsule + axes into final object
         this.obj = new THREE.Object3D();
