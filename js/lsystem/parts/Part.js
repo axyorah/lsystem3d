@@ -1,5 +1,5 @@
 class Part {
-    constructor( len=1., wid=0.5, dep=0.5, color ) {
+    constructor( len=1., wid=0.5, dep=0.5, color='#ff0000', visibleAxes=false ) {
         this._len0 = len;
         this._wid0 = wid;
         this._dep0 = dep;
@@ -13,6 +13,12 @@ class Part {
         this.capsule; // THREE.Object3D which contains mesh(es) of the actual part
         this.axes; // axes that show part's orientation (needed for aligning the object to vectors)
         this.obj;  // capsule + axes (use this to rescale/reposition/reorient)
+
+        this._create(visibleAxes); // set
+    }
+
+    get set() {
+        return new PartBuilder();
     }
 
     get len0() { return this._len0; }
@@ -48,19 +54,13 @@ class Part {
         return sidePos.add( this.capsule.position.clone().multiplyScalar( -1 ) ).normalize();
     }
 
-    setWid( wid ) { this._wid = wid; }
-    setLen( len ) { this._len = len; }
-    setDep( dep ) { this._dep = dep; }
+    set wid( wid ) { this._wid = wid; }
+    set len( len ) { this._len = len; }
+    set dep( dep ) { this._dep = dep; }
 
-    makeCapsule() {
-        const capsule = new THREE.Object3D();
-
-        return capsule;
-    }
-
-    makePart( visibleAxes=false ) {
+    _create(visibleAxes) {
         // capsule
-        this.capsule = this.makeCapsule();
+        this.capsule = capsule = new THREE.Object3D();
 
         // axes        
         this.axes = makeAxes( visibleAxes );
@@ -71,6 +71,10 @@ class Part {
         this.obj.add(this.axes);
         this.obj.name = 'part';
         return this.obj;
+    }
+
+    static create(len=1., wid=0.5, dep=0.5, color='#ff0000', visibleAxes=false) {
+        return new Part(len, wid, dep, color, visibleAxes);
     }
 
     moveTo( position ) {
@@ -98,5 +102,34 @@ class Part {
         // recolor the object
         // (assumed that THREE.Mesh objects are stored in this.capsule)
         this.capsule.children.map( (primitive) => primitive.material.color.set(color) )
+    }
+}
+
+class PartBuilder {
+    constructor() {
+        this.wid = 1;
+        this.len = 1;
+        this.dep = 1;
+        this.col = '#ff0000';
+    }
+
+    width(wid) {
+        this.wid = wid;
+    }
+
+    length(len) {
+        this.len = len;
+    }
+
+    depth(dep) {
+        this.dep = dep;
+    }
+
+    color(col) {
+        this.col = col;
+    }
+
+    build() {
+        return new Part(this.wid, this.len, this.dep, this.color);
     }
 }
