@@ -1,40 +1,9 @@
 class Leaf extends Part {
-    constructor( len=1.0, wid=0.25, dep=0.1, color=0x00FF00 ) {
-        super( len, wid, dep, color );
-        
-        /* 
-        // recall: Part class contains the following attributes:
-        this._len0 = len;
-        this._wid0 = wid;
-        this._dep0 = dep; 
-
-        this._len = len;
-        this._wid = wid;
-        this._dep = dep;
-        this._color = color;
-
-        this.mat;  // material
-        this.capsule; // THREE.Object3D which contains mesh(es) of the actual part
-        this.axes; // axes that show part's orientation (needed for aligning the object to vectors)
-        this.obj;  // capsule + axes (use this to rescale/reposition/reorient)
-
-        // additionally, the following methods are available:
-        getters for all non-THREE attributes (len, wid, color..)
-        fwd() - part's forward axis TRHEE.Vector3
-        top() - part's top axis THREE.Vector3
-        side() - part's side axis THREE.Vector3
-        makeUnitLine()
-        makeAxes() 
-        makeCapsule() <-- NEEDS TO BE OVERWRITTEN!
-        makePart() <-- REPLACED BY `makeLeaf()`
-        moveTo()
-        orient()
-        rescale()
-        recolor()
-        */
+    constructor( len=1.0, wid=0.25, dep=0.1, color=0x00FF00, visibleAxes=false ) {
+        super( len, wid, dep, color, visibleAxes );
     }
 
-    makeLeafGeometry() {
+    makeGeometry() {
         /*
         assemble leaf geometry from the following scheme:
 
@@ -111,7 +80,7 @@ class Leaf extends Part {
         this.mat = new THREE.MeshPhongMaterial( { 
             color: this.color, shininess: 20, side: THREE.DoubleSide 
         } );
-        const leafGeo = this.makeLeafGeometry();
+        const leafGeo = this.makeGeometry();
 
         const leaf = new THREE.Mesh( leafGeo, this.mat );
         leaf.castShadow = true; 
@@ -134,7 +103,7 @@ class Leaf extends Part {
         return capsule
     }
 
-    makeLeaf( visibleAxes=false ) {
+    _create( visibleAxes=false ) {
         // leaf capsule
         this.capsule = this.makeCapsule();
 
@@ -148,4 +117,43 @@ class Leaf extends Part {
         this.obj.name = 'leaf';
         return this.obj;
     }
+
+    static create(len=1, wid=1, dep=1, col=1, visibleAxes=false) {
+        return new Leaf(len, wid, dep, col, visibleAxes);
+    }
 }
+
+class LeafBuilder {
+    constructor() {
+        this._len = 1;
+        this._wid = 1;
+        this._dep = 1;
+        this._col = '#ff0000';
+        this._visibleAxes = false;
+    }
+
+    length(val)  {
+        this._len = val;
+    }
+
+    width(val) {
+        this._wid = val;
+    }
+
+    depth(val) {
+        this._dep = val;
+    }
+
+    color(val) {
+        this._col = val;
+    }
+
+    visibleAxes(val) {
+        this._visibleAxes = val;
+    }
+
+    build() {
+        return new Leaf(this._len, this._wid, this._dep, this._col, this._visibleAxes);
+    }
+}
+

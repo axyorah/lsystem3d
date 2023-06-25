@@ -210,7 +210,6 @@ class LSystem {
     getNewLeaf() {
         // creates new leaf with dimensions specified by 'this' parameters
         const leafer = new Leaf();
-        leafer.makeLeaf();
 
         leafer.rescale( this.leafWid, this.leafLen, this.leafDep );
         leafer.orient( this.turtle.obj.quaternion );
