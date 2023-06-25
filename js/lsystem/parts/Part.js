@@ -60,7 +60,7 @@ class Part {
 
     _create(visibleAxes) {
         // capsule
-        this.capsule = capsule = new THREE.Object3D();
+        this.capsule = new THREE.Object3D();
 
         // axes        
         this.axes = makeAxes( visibleAxes );
