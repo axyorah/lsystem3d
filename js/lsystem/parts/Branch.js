@@ -1,60 +1,39 @@
 class Branch extends Part {
-    constructor( len=1., wid=0.1, color=0xFFAA00, ratio=1. ) {
-        super( len, wid, wid, color );
+    constructor( len=1., wid=0.1, color=0xFFAA00, ratio=1., visibleAxes=false) {
+        super( len, wid, wid, color, visibleAxes );
         this._ratio = ratio;
-        
-        /* 
-        // recall: Part class contains the following attributes:
-        this._len0 = len;
-        this._wid0 = wid;
-        this._dep0 = dep; NOT USED FOR BRANCH
+        this._create(visibleAxes);
+    }
 
-        this._len = len;
-        this._wid = wid;
-        this._dep = dep; NOT USED FOR BRANCH
-        this._color = color;
-
-        this.mat;  // material
-        this.capsule; // THREE.Object3D which contains mesh(es) of the actual part
-        this.axes; // axes that show part's orientation (needed for aligning the object to vectors)
-        this.obj;  // capsule + axes (use this to rescale/reposition/reorient)
-
-        // additionally, the following methods are available:
-        getters for all non-THREE attributes (len, wid, color..)
-        fwd() - part's forward axis TRHEE.Vector3
-        top() - part's top axis THREE.Vector3
-        side() - part's side axis THREE.Vector3
-        makeUnitLine()
-        makeAxes() 
-        makeCapsule() <-- NEEDS TO BE OVERWRITTEN!
-        makePart() <-- REPLACED BY `makeBranch()`
-        moveTo()
-        orient()
-        rescale() <-- NEEDS TO BE OVERWRITTEN
-        recolor()
-        */
+    get set() {
+        return new BranchBuilder();
     }
 
     get ratio() { return this._ratio; }
-    setRatio( val ) { this._ratio = val; }    
+
+    set ratio(val) {
+        // change branch's top-to-bottom width ratio
+        // recall: branch's core is not a "true" cylinder, but rather a bisected cone 
+        // with bottom base larger than the upper base;
+        // when top-to-bottom base ratio is changed we need to 
+        // replace cylinder geometry and rescale the top sphere
+
+        this._ratio = val;
+        const branch = this.obj;
+
+        const cylinder = branch.children[0].children[0];
+        const sphere1 = branch.children[0].children[1];
+        const sphere2 = branch.children[0].children[2];
+
+        // replace cylinder geometry entirely...
+        cylinder.geometry = new THREE.CylinderBufferGeometry( this.wid * this.ratio, this.wid, this.len, 8);
+
+        // rescale top sphere
+        sphere2.scale.set( sphere1.scale.x * this.ratio, sphere1.scale.y * this.ratio, sphere1.scale.z * this.ratio );
+    }
 
     makeCapsule() {
         return new Capsule(this.len, this.wid, this.ratio, this.color);
-    }
-
-    makeBranch( visibleAxes=false ) {
-        // branch capsule
-        this.capsule = this.makeCapsule();
-
-        // branch axes        
-        this.axes = makeAxes( visibleAxes ); // defined in Part class
-
-        // combine capsule + axes into final object
-        this.obj = new THREE.Object3D();
-        this.obj.add(this.capsule);
-        this.obj.add(this.axes);
-        this.obj.name = 'branch';
-        return this.obj;
     }
 
     rescale( x, y, z ) {
@@ -77,8 +56,6 @@ class Branch extends Part {
         // but this distorts the edges;
         // we want the edges to remain perfect spheres at all scales,
         // so we only rescale the cylinder
-        //this.setWid( x );
-        //this.setLen( y );
 
         const branch = this.obj;
 
@@ -94,24 +71,61 @@ class Branch extends Part {
         sphere2.position.set(0, y, 0);
     }
 
-    changeRatio( ratio ) {
-        // change branch's top-to-bottom width ratio
-        // recall: branch's core is not a "true" cylinder, but rather a bisected cone 
-        // with bottom base larger than the upper base;
-        // when top-to-bottom base ratio is changed we need to 
-        // replace cylinder geometry and rescale the top sphere
-        const branch = this.obj;
+    _create(visibleAxes = false) {
+        // branch capsule
+        this.capsule = this.makeCapsule();
 
-        const cylinder = branch.children[0].children[0];
-        const sphere1 = branch.children[0].children[1];
-        const sphere2 = branch.children[0].children[2];
+        // branch axes        
+        this.axes = makeAxes( visibleAxes ); // defined in Part class
 
-        // replace cylinder geometry entirely...
-        cylinder.geometry = new THREE.CylinderBufferGeometry( this.wid * ratio, this.wid, this.len, 8);
+        // combine capsule + axes into final object
+        this.obj = new THREE.Object3D();
+        this.obj.add(this.capsule);
+        this.obj.add(this.axes);
+        this.obj.name = 'branch';
+        return this.obj;
+    }
 
-        // rescale top sphere
-        sphere2.scale.set( sphere1.scale.x * ratio, sphere1.scale.y * ratio, sphere1.scale.z * ratio );
+    static create(len=1., wid=0.1, color=0xFFAA00, ratio=1., visibleAxes=false) {
+        return new Branch(len, wid, color, ratio, visibleAxes);
+    }
+}
 
-        this.setRatio( ratio );
+class BranchBuilder {
+    constructor() {
+        this._len = 1.;
+        this._wid = 1.;
+        this._dep = 1.;
+        this._col = '#ff0000';
+        this._rat = 1.;
+        this._visibleAces = false;
+    }
+
+    length(val) {
+        this._len = val;
+    }
+
+    width(val) {
+        this._wid = val;
+    }
+
+    depth(val) {
+        this._dep = val;
+    }
+
+    color(val) {
+        this._col = val;
+    }
+
+    ratio(val) {
+        this._rat = val;
+    }
+
+    visibleAxes(val) {
+        this._visibleAxes = val;
+    }
+
+    build() {
+        return new Branch(this._len, this._wid, this._col, this._rat, this._visibleAxes);
     }
 }

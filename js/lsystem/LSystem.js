@@ -153,9 +153,9 @@ class LSystem {
         const zs = this.branchWid * Math.pow(this.branchRatio, lvl);
 
         const brancher = new Branch();
-        brancher.makeBranch();
+        // brancher.makeBranch();
         brancher.rescale( xs, ys, zs );
-        brancher.changeRatio( this.branchRatio );
+        brancher.ratio = this.branchRatio;
         brancher.orient( this.turtle.obj.quaternion );
         brancher.moveTo( this.turtle.position );
         brancher.recolor( this.branchColor );
