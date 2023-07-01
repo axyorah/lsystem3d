@@ -1,5 +1,5 @@
 class Leaf extends Part {
-    constructor( len=1.0, wid=0.25, dep=0.1, color=0x00FF00, visibleAxes=false ) {
+    constructor( len=1.0, wid=0.25, dep=0.1, color='#00FF00', visibleAxes=false ) {
         super( len, wid, dep, color, visibleAxes );
     }
 
@@ -78,7 +78,7 @@ class Leaf extends Part {
     makeCapsule() {
         // make leaf
         this.mat = new THREE.MeshPhongMaterial( { 
-            color: this.color, shininess: 20, side: THREE.DoubleSide 
+            color: this._color, shininess: 20, side: THREE.DoubleSide 
         } );
         const leafGeo = this.makeGeometry();
 
@@ -91,7 +91,7 @@ class Leaf extends Part {
             new THREE.Vector3(0,0,0),
             new THREE.Vector3(0,0.25, 0)
         ]);
-        const petioleMat = new THREE.LineBasicMaterial({ color: this.color });
+        const petioleMat = new THREE.LineBasicMaterial({ color: this._color });
         const petiole = new THREE.Line( petioleGeo, petioleMat ); 
         
         // add all leaf parts to leaf capsule
@@ -118,8 +118,13 @@ class Leaf extends Part {
         return this.obj;
     }
 
-    static create(len=1, wid=1, dep=1, col=1, visibleAxes=false) {
+    static create(len=1, wid=1, dep=1, col=0x00FF00, visibleAxes=false) {
         return new Leaf(len, wid, dep, col, visibleAxes);
+    }
+
+    static copy(part, lvl=0) {
+        // maybe leafs should also be affected by lvl...
+        return new Leaf(part.len, part.wid, part.dep, part.color, part.visibleAxes);
     }
 }
 
