@@ -146,6 +146,10 @@ class Part {
         return new Part(len, wid, dep, color, visibleAxes);
     }
 
+    static copy(part) {
+        return new Part(part.len, part.wid, part.dep, part.color, part.visibleAxes);
+    }
+
     moveTo( position ) {
         // move branch to a specified position (THREE.Vector3)
         if ( !(position instanceof( THREE.Vector3 )) ) {

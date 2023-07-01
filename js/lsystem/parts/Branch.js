@@ -20,16 +20,54 @@ class Branch extends Part {
 
         this._ratio = val;
         const branch = this.obj;
+        const capsule = branch.children[0];
 
-        const cylinder = branch.children[0].children[0];
-        const sphere1 = branch.children[0].children[1];
-        const sphere2 = branch.children[0].children[2];
+        const cylinder = capsule.children[0];
+        const sphere1 = capsule.children[1];
+        const sphere2 = capsule.children[2];
 
         // replace cylinder geometry entirely...
-        cylinder.geometry = new THREE.CylinderBufferGeometry( this.wid * this.ratio, this.wid, this.len, 8);
+        cylinder.geometry = new THREE.CylinderBufferGeometry( this.wid * val, this.wid, this.len, 8);
 
         // rescale top sphere
-        sphere2.scale.set( sphere1.scale.x * this.ratio, sphere1.scale.y * this.ratio, sphere1.scale.z * this.ratio );
+        sphere2.scale.set( sphere1.scale.x * val, sphere1.scale.y * val, sphere1.scale.z * val );
+    }
+
+    set color (val) {
+        const segments = this.obj.children[0].children;
+        segments.forEach((segment) => {
+            if (segment.name !== 'branch') {
+                return;
+            }
+            segment.children.forEach( (child) => {
+                if (child.name !== 'branch-capsule') { 
+                    return;
+                }
+                child.children.forEach(
+                    (primitive) => primitive.material.color.set(val) 
+                );
+            } );
+        } );
+    }
+
+    set scale (xyz) {
+        const [x, y, z] = xyz;
+        const cylinder = this.obj.children[0].children[0];
+        const sphere1 = this.obj.children[0].children[1];
+        const sphere2 = this.obj.children[0].children[2];
+        
+        // change top-to-bottom width ratio (for cylinder)branchR
+        cylinder.geometry = new THREE.CylinderBufferGeometry(this.wid0 * this.ratio, this.wid0, this.len0, 8);
+        
+        // rescale
+        // const xs = this.branchWid / this.branchWid0 * Math.pow(this.ratio, lvl);
+        // const ys = this.branchLen / this.branchLen0;
+        // const zs = this.branchWid / this.branchWid0 * Math.pow(this.ratio, lvl);
+
+        cylinder.scale.set( x, y, z );
+        sphere1.scale.set(  x, x, x );
+        sphere2.scale.set( x * this.ratio, x * this.ratio, x * this.ratio ); // top-to-bottom width ratio!
+        
     }
 
     makeCapsule() {
@@ -88,6 +126,10 @@ class Branch extends Part {
 
     static create(len=1., wid=0.1, color=0xFFAA00, ratio=1., visibleAxes=false) {
         return new Branch(len, wid, color, ratio, visibleAxes);
+    }
+
+    static copy(part) {
+        return new Branch(part.len, part.wid, part.color, part.ratio, part.visibleAxes);
     }
 }
 
