@@ -108,9 +108,23 @@ class Part {
 
     set orientation( val ) {
         if ( !(val instanceof( THREE.Quaternion )) ) {
-            throw TypeError(`Argument for 'Turtle.orion' should be of type 'THREE.Quaternion' but got ${val}`);
+            throw TypeError(`Argument for 'Turtle.orientation' should be of type 'THREE.Quaternion' but got ${val}`);
         }
         this.obj.setRotationFromQuaternion( val );
+    }
+
+    update( map ) {
+        if (!(map instanceof Object)) {
+            const msg = '`update` method takes an object ' +
+                'with keys being attributes that require an update ' +
+                'and values being the new values for these attributes, ' +
+                `got ${map}`;
+            throw new TypeError(msg);
+        }
+        Object.keys(map).forEach((key) => {
+            // TODO: check if setter exists?
+            this[key] = map[key];
+        });
     }
 
     _create(visibleAxes) {
