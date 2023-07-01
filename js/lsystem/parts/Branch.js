@@ -1,5 +1,5 @@
 class Branch extends Part {
-    constructor( len=1., wid=0.1, color=0xFFAA00, ratio=1., visibleAxes=false) {
+    constructor( len=1., wid=0.1, color='#FFAA00', ratio=1., visibleAxes=false) {
         super( len, wid, wid, color, visibleAxes );
         this._ratio = ratio;
         this._create(visibleAxes);
@@ -34,20 +34,17 @@ class Branch extends Part {
     }
 
     set color (val) {
-        const segments = this.obj.children[0].children;
+        this._color = val;
+        const segments = this.obj.children;
         segments.forEach((segment) => {
-            if (segment.name !== 'branch') {
+            if (segment.name !== 'branch-capsule') {
                 return;
             }
-            segment.children.forEach( (child) => {
-                if (child.name !== 'branch-capsule') { 
-                    return;
-                }
-                child.children.forEach(
-                    (primitive) => primitive.material.color.set(val) 
-                );
-            } );
-        } );
+
+            segment.children.forEach((primitive) => {
+                primitive.material.color.set(val);
+            })
+        });
     }
 
     set scale (xyz) {
@@ -62,7 +59,7 @@ class Branch extends Part {
     }
 
     makeCapsule() {
-        return new Capsule(this.len, this.wid, this.ratio, this.color);
+        return new Capsule(this.len, this.wid, this.ratio, this.color, 'branch');
     }
 
     rescale( x, y, z ) {

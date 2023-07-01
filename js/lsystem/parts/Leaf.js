@@ -3,6 +3,20 @@ class Leaf extends Part {
         super( len, wid, dep, color, visibleAxes );
     }
 
+    set color(val) {
+        this._color = val;
+        const segments = this.obj.children;
+        segments.forEach((segment) => {
+            if (segment.name !== 'leaf-capsule') {
+                return;
+            }
+
+            segment.children.forEach((primitive) => {
+                primitive.material.color.set(val);
+            })
+        });
+    }
+
     makeGeometry() {
         /*
         assemble leaf geometry from the following scheme:
