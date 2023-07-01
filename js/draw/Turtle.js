@@ -11,6 +11,10 @@ class Turtle {
         // get current turtle's position (THREE.Vector3)
         return this.obj.position.clone();
     }
+
+    get orientation() {
+        return this.obj.quaternion.clone();
+    }
     
     get fwd() {
         // get turtle's 'fwd' axis (THREE.Vector3) in World coordinates
