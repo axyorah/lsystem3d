@@ -7,6 +7,7 @@ class Part {
         this._len = len;
         this._wid = wid;
         this._dep = dep;
+
         this._color = color;
 
         this.mat;  // material
@@ -27,7 +28,27 @@ class Part {
     get len() { return this._len; }
     get wid() { return this._wid; }
     get dep() { return this._dep; }
+    get scale() { 
+        return [
+            this._wid / this._wid0, 
+            this._len / this._len0,
+            this._dep / this._dep0,
+        ]; 
+    }
+
+    get roll() { return this._roll; }
+    get pitch() { return this._pitch; }
+    get yaw() { return this._yaw; }
+
     get color() { return this._color; }
+
+    get position() {
+        return this.obj.position.clone();
+    }
+
+    get orientation() {
+        return this.obj.quaternion.clone();
+    }
 
     // axes getter: (ax.position - capsule.position) normalized
     get fwd() {
@@ -54,9 +75,43 @@ class Part {
         return sidePos.add( this.capsule.position.clone().multiplyScalar( -1 ) ).normalize();
     }
 
-    set wid( wid ) { this._wid = wid; }
-    set len( len ) { this._len = len; }
-    set dep( dep ) { this._dep = dep; }
+    set wid( val ) { 
+        this._wid = val;
+        this.obj.scale.set( val / this._wid0, 1, 1 );
+    }
+    set len( val ) { 
+        this._len = val;
+        this.obj.scale.set( 1, val / this._len0, 1 );
+    }
+    set dep( val ) { 
+        this._dep = val;
+        this.obj.scale.set( 1, 1, val / this._dep0);
+    }
+    set scale (args) {
+        const [x, y, z] = args;
+        this._wid = x * this._wid0;
+        this._len = y * this._len0;
+        this._dep = z * this._dep0;
+        this.obj.scale.set( x, y, z );
+    }
+    set color( val ) {
+        this._color = val;
+        this.capsule.children.map( (primitive) => primitive.material.color.set(val) );
+    }
+
+    set position( val ) {
+        if ( !(val instanceof( THREE.Vector3 )) ) {
+            throw new TypeError(`Argument for 'Turtle.moveTo' should be of type 'THREE.Vector3' but got ${val}`);
+        }
+        this.obj.position.set( val.x, val.y, val.z );
+    }
+
+    set orientation( val ) {
+        if ( !(val instanceof( THREE.Quaternion )) ) {
+            throw TypeError(`Argument for 'Turtle.orion' should be of type 'THREE.Quaternion' but got ${val}`);
+        }
+        this.obj.setRotationFromQuaternion( val );
+    }
 
     _create(visibleAxes) {
         // capsule
@@ -101,7 +156,7 @@ class Part {
     recolor( color ) {
         // recolor the object
         // (assumed that THREE.Mesh objects are stored in this.capsule)
-        this.capsule.children.map( (primitive) => primitive.material.color.set(color) )
+        this.capsule.children.map( (primitive) => primitive.material.color.set(color) );
     }
 }
 
