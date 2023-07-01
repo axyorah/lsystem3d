@@ -27,10 +27,10 @@ class Branch extends Part {
         const sphere2 = capsule.children[2];
 
         // replace cylinder geometry entirely...
-        cylinder.geometry = new THREE.CylinderBufferGeometry( this.wid * val, this.wid, this.len, 8);
+        cylinder.geometry = new THREE.CylinderGeometry(this.wid * val, this.wid, this.len, 8);
 
         // rescale top sphere
-        sphere2.scale.set( sphere1.scale.x * val, sphere1.scale.y * val, sphere1.scale.z * val );
+        sphere2.geometry = new THREE.SphereGeometry(this.wid * val);
     }
 
     set color (val) {
@@ -56,18 +56,9 @@ class Branch extends Part {
         const sphere1 = this.obj.children[0].children[1];
         const sphere2 = this.obj.children[0].children[2];
         
-        // change top-to-bottom width ratio (for cylinder)branchR
-        cylinder.geometry = new THREE.CylinderBufferGeometry(this.wid0 * this.ratio, this.wid0, this.len0, 8);
-        
-        // rescale
-        // const xs = this.branchWid / this.branchWid0 * Math.pow(this.ratio, lvl);
-        // const ys = this.branchLen / this.branchLen0;
-        // const zs = this.branchWid / this.branchWid0 * Math.pow(this.ratio, lvl);
-
-        cylinder.scale.set( x, y, z );
-        sphere1.scale.set(  x, x, x );
-        sphere2.scale.set( x * this.ratio, x * this.ratio, x * this.ratio ); // top-to-bottom width ratio!
-        
+        cylinder.scale.set(x, y, z);
+        sphere1.scale.set(x, x, x);
+        sphere2.scale.set(x, x, x);
     }
 
     makeCapsule() {
@@ -128,8 +119,11 @@ class Branch extends Part {
         return new Branch(len, wid, color, ratio, visibleAxes);
     }
 
-    static copy(part) {
-        return new Branch(part.len, part.wid, part.color, part.ratio, part.visibleAxes);
+    static copy(part, lvl=0) {
+        // lvl indicates how "far" is branch from root;
+        // if ratio is not 1 - it would affect the width (and in the future maybe len too)
+        const wid = part.wid * Math.pow(part.ratio, lvl);
+        return new Branch(part.len, wid, part.color, part.ratio, part.visibleAxes);
     }
 }
 
