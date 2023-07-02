@@ -1,4 +1,4 @@
-class LSys {
+class LSystem {
     RESERVED_SYMBOLS = '+-^vdb[]X'.split('');
     DEFAULT_AXIOM = '[X]';
     DEFAULT_RULES = {

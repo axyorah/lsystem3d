@@ -1,5 +1,5 @@
 let camera, scene, renderer, cameraControls, skyTexture;
-let turtle, lsys;
+let lsys;
 const clock = new THREE.Clock();
 const container = document.querySelector("#container");
 
@@ -45,7 +45,7 @@ function fillScene() {
     //addFloatingRocktToScene( scene ); // alternatively place a floating rock underneath the plant
 
     // LSYSTEM
-    lsys = new LSys();
+    lsys = new LSystem();
     scene.add( lsys.obj );
 
 }
