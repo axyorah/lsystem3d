@@ -1,27 +1,32 @@
 class LSys {
     RESERVED_SYMBOLS = '+-^vdb[]X'.split('');
+    DEFAULT_AXIOM = '[X]';
+    DEFAULT_RULES = {
+        'X': '[^F[^+L][^-L]F+X]b[^F+X]bv',
+        'F': 'Fb+F[X]',
+        'L': 'L',
+        '[': '[',
+        ']': ']',
+        '+': '+',
+        '-': '-',
+        '^': '^',
+        'v': 'v',
+        'd': 'd',
+        'b': 'b'
+    };
+    DEFAULT_MAP = {
+        F: new Branch(),
+        L: new Leaf(),
+    };
     
-    constructor() {        
+    constructor() {
         this.step = 0;
-        this.axiom = '[X]';
-        this.states = [this.axiom];
-        this._rules = {
-            'X': '[^F[^+L][^-L]F+X]b[^F+X]bv',
-            'F': 'Fb+F[X]',
-            'L': 'L',
-            '[': '[',
-            ']': ']',
-            '+': '+',
-            '-': '-',
-            '^': '^',
-            'v': 'v',
-            'd': 'd',
-            'b': 'b'
-        };
-        this.map = {
-            F: new Branch(),
-            L: new Leaf(),
-        };
+        this.axiom = this.DEFAULT_AXIOM;
+        this.states = [this.DEFAULT_AXIOM];
+        this._rules = structuredClone(this.DEFAULT_RULES);
+        this.map = Object.fromEntries(Object.keys(this.DEFAULT_MAP).map(
+            (key) => [key, this.DEFAULT_MAP[key]])
+        ); // weird way to make a copy...
 
         this.yaw = 0;
         this.pitch = 0;
@@ -66,6 +71,17 @@ class LSys {
         }
         return this.states.at(-1);
     };
+
+    reset() {
+        this.axios = this.DEFAULT_AXIOM;
+        this.states = [this.DEFAULT_AXIOM];
+        this._rules = structuredClone(this.DEFAULT_RULES);
+        this.map = Object.fromEntries(Object.keys(this.DEFAULT_MAP).map(
+            (key) => [key, this.DEFAULT_MAP[key]])
+        ); // weird way to make a copy...
+        this.steps = 0;
+        return this.states.at(-1);
+    }
 
     update(partMap) {}
 
