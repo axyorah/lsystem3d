@@ -44,9 +44,8 @@ function fillScene() {
     scene.add(ground);
     //addFloatingRocktToScene( scene ); // alternatively place a floating rock underneath the plant
 
-    // LSYSTEM + TURTLE
-    turtle = new Turtle();
-    lsys = new LSystem( turtle );
+    // LSYSTEM
+    lsys = new LSys();
     scene.add( lsys.obj );
 
 }
