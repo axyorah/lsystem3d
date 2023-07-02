@@ -23,6 +23,10 @@ class LSys {
             L: new Leaf(),
         };
 
+        this.yaw = 0;
+        this.pitch = 0;
+        this.roll = 0;
+
         this.obj = new THREE.Object3D;
         this.builder = new Builder();
     }
