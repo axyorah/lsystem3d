@@ -145,12 +145,10 @@ class Leaf extends Part {
 
     update(part, lvl=0) {
         // Updates geometry, position and orientation
-        // console.log(this.obj.scale.y, part.len / part.len0, part.len, part.len0)
-        // TODO: check why part.len / part.len0 changes... O.o
-        this.obj.scale.set(  
-            part.wid / part.wid0, 
-            part.len / part.len0, 
-            part.dep / part.dep0 
+        this.obj.scale.set(
+            part.wid / this.wid, 
+            part.len / this.len, 
+            part.dep / this.dep 
         );
 
         // update color
