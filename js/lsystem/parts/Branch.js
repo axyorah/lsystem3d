@@ -130,6 +130,38 @@ class Branch extends Part {
         branch.color = part.color; // this needs to be set explicitly... :/
         return branch;
     }
+
+    update(part, lvl) {
+        // Updates geometry (with rescale based on lvl), position and orientation
+        // based to reference part.
+        // To rescale branch we could do something like:
+        //     this.obj.scale.set( part.wid / part.wid0, part.len / part.len0, part.wid / part.wid0 );
+        // but this distorts the edges;
+        // we want the edges to remain perfect spheres at all scales,
+        // so we deconstruct the capsule the scale individual parts separately
+        const [cylinder, sphere1, sphere2] = this.obj.children[0].children;
+        
+        // change geometry for primitives
+        cylinder.geometry = new THREE.CylinderGeometry(
+            part.wid * part.ratio * Math.pow(part.ratio, lvl), 
+            part.wid * Math.pow(part.ratio, lvl), 
+            part.len, 
+            8
+        );
+        sphere1.geometry = new THREE.SphereGeometry(part.wid * Math.pow(part.ratio, lvl), 8);
+        sphere2.geometry = new THREE.SphereGeometry(part.wid * this.ratio * Math.pow(part.ratio, lvl), 8);
+
+        // rearrange primitives within this.obj
+        cylinder.position.set(0, part.len/2, 0);
+        sphere2.position.set(0, part.len, 0);
+
+        // update color
+        this.color = part.color;
+
+        // update position and orientation
+        this.position = part.position;
+        this.orientation = part.orientation;
+    }
 }
 
 class BranchBuilder {

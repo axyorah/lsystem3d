@@ -34,6 +34,7 @@ class LSystem {
 
         this.obj = new THREE.Object3D;
         this.builder = new Builder();
+        this.partsByUuid = {};
     }
 
     get rules() {
@@ -83,8 +84,6 @@ class LSystem {
         return this.states.at(-1);
     }
 
-    update(partMap) {}
-
     build() {
         const obj = this.builder.build(this);
 
@@ -92,5 +91,9 @@ class LSystem {
         // because scence renders this.obj - we can't overwrite it, only modify
         this.obj.children.pop();
         this.obj.children.push(obj);
+    }
+
+    update() {
+        this.builder.update(this,);
     }
 }

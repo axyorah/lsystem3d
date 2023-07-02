@@ -114,17 +114,18 @@ class Part {
     }
 
     update( map ) {
-        if (!(map instanceof Object)) {
-            const msg = '`update` method takes an object ' +
-                'with keys being attributes that require an update ' +
-                'and values being the new values for these attributes, ' +
-                `got ${map}`;
-            throw new TypeError(msg);
-        }
-        Object.keys(map).forEach((key) => {
-            // TODO: check if setter exists?
-            this[key] = map[key];
-        });
+        // if (!(map instanceof Object)) {
+        //     const msg = '`update` method takes an object ' +
+        //         'with keys being attributes that require an update ' +
+        //         'and values being the new values for these attributes, ' +
+        //         `got ${map}`;
+        //     throw new TypeError(msg);
+        // }
+        // Object.keys(map).forEach((key) => {
+        //     // TODO: check if setter exists?
+        //     this[key] = map[key];
+        // });
+        throw new Error('Not implemented');
     }
 
     _create(visibleAxes) {
