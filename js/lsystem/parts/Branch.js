@@ -11,6 +11,8 @@ class Branch extends Part {
 
     get ratio() { return this._ratio; }
 
+    get color() { return this._color; }
+
     set ratio(val) {
         // change branch's top-to-bottom width ratio
         // recall: branch's core is not a "true" cylinder, but rather a bisected cone 

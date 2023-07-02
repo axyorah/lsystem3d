@@ -3,6 +3,8 @@ class Leaf extends Part {
         super( len, wid, dep, color, visibleAxes );
     }
 
+    get color() { return this._color; }
+
     set color(val) {
         this._color = val;
         const segments = this.obj.children;

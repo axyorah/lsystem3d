@@ -24,6 +24,7 @@ class Builder {
                 const copy = ref.constructor.copy(ref, lvl);
                 copy.orientation = this.turtle.orientation;
                 copy.position = this.turtle.position;
+                copy.color = ref.color; //  this needs to be set explicitly
                 obj.add(copy.obj);
 
                 this.turtle.forward(copy.len);
