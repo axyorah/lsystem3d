@@ -49,6 +49,10 @@ class Branch extends Part {
         });
     }
 
+    get scale() {
+        return super.scale;
+    }
+
     set scale (xyz) {
         const [x, y, z] = xyz;
         const cylinder = this.obj.children[0].children[0];
@@ -56,8 +60,8 @@ class Branch extends Part {
         const sphere2 = this.obj.children[0].children[2];
         
         cylinder.scale.set(x, y, z);
-        sphere1.scale.set(x, x, x);
-        sphere2.scale.set(x, x, x);
+        sphere1.scale.set(x, x, z);
+        sphere2.scale.set(x, x, z);
     }
 
     makeCapsule() {
@@ -122,7 +126,9 @@ class Branch extends Part {
         // lvl indicates how "far" is branch from root;
         // if ratio is not 1 - it would affect the width (and in the future maybe len too)
         const wid = part.wid * Math.pow(part.ratio, lvl);
-        return new Branch(part.len, wid, part.color, part.ratio, part.visibleAxes);
+        const branch = new Branch(part.len, wid, part.color, part.ratio, part.visibleAxes);
+        branch.color = part.color; // this needs to be set explicitly... :/
+        return branch;
     }
 }
 
