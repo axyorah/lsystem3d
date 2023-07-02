@@ -140,16 +140,32 @@ class Branch extends Part {
         // we want the edges to remain perfect spheres at all scales,
         // so we deconstruct the capsule the scale individual parts separately
         const [cylinder, sphere1, sphere2] = this.obj.children[0].children;
+
+        // udpate ratio
+        this.ratio = part.ratio;
         
         // change geometry for primitives
+        // (for cylinder we need to redefine geometry, 
+        // because its top and bottom can scale differently depending on ratio;
+        // for spheres it's sufficient just to scale)
         cylinder.geometry = new THREE.CylinderGeometry(
             part.wid * part.ratio * Math.pow(part.ratio, lvl), 
             part.wid * Math.pow(part.ratio, lvl), 
             part.len, 
             8
         );
-        sphere1.geometry = new THREE.SphereGeometry(part.wid * Math.pow(part.ratio, lvl), 8);
-        sphere2.geometry = new THREE.SphereGeometry(part.wid * this.ratio * Math.pow(part.ratio, lvl), 8);
+        // sphere1.geometry = new THREE.SphereGeometry(part.wid * Math.pow(part.ratio, lvl), 8);
+        sphere1.scale.set(            
+            part.wid / this.wid * Math.pow(this.ratio, lvl),
+            part.wid / this.wid * Math.pow(this.ratio, lvl),
+            part.wid / this.wid * Math.pow(this.ratio, lvl)
+        );
+        // sphere2.geometry = new THREE.SphereGeometry(part.wid * part.ratio * Math.pow(part.ratio, lvl), 8);
+        sphere2.scale.set(
+            part.wid / this.wid * this.ratio * Math.pow(this.ratio, lvl), 
+            part.wid / this.wid * this.ratio * Math.pow(this.ratio, lvl), 
+            part.wid / this.wid * this.ratio * Math.pow(this.ratio, lvl)
+        );
 
         // rearrange primitives within this.obj
         cylinder.position.set(0, part.len/2, 0);
