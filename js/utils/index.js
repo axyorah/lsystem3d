@@ -1,29 +1,32 @@
 function makeUnitLine() {
-    // returns red vertical unit line 
-    const points = [new THREE.Vector3( 0, -0.5, 0 ), new THREE.Vector3( 0, 0.5, 0 )];
-        
-    const geometry = new THREE.BufferGeometry().setFromPoints( points );
-    const material = new THREE.LineBasicMaterial({ color: 0xFF0000 });
+    // returns red vertical unit line
+    const points = [
+        new THREE.Vector3(0, -0.5, 0),
+        new THREE.Vector3(0, 0.5, 0),
+    ];
 
-    return new THREE.Line( geometry, material );
+    const geometry = new THREE.BufferGeometry().setFromPoints(points);
+    const material = new THREE.LineBasicMaterial({ color: 0xff0000 });
+
+    return new THREE.Line(geometry, material);
 }
 
-function makeAxes( visible = false ) {
-    // create axes object (THREE.Object3D) containing initial fwd, top and side axes (each is THREE.Line)   
+function makeAxes(visible = false) {
+    // create axes object (THREE.Object3D) containing initial fwd, top and side axes (each is THREE.Line)
     const fwd = makeUnitLine();
     fwd.position.set(0, 1, 0);
     fwd.name = 'fwd';
 
     const top = this.makeUnitLine();
-    top.rotateX( Math.PI / 2 );
+    top.rotateX(Math.PI / 2);
     top.position.set(0, 0.5, 0.5);
-    top.material.color.set(0x0000FF);
+    top.material.color.set(0x0000ff);
     top.name = 'top';
 
     const side = this.makeUnitLine();
-    side.rotateZ( Math.PI / 2 );
+    side.rotateZ(Math.PI / 2);
     side.position.set(0.5, 0.5, 0);
-    side.material.color.set(0x00FF00);
+    side.material.color.set(0x00ff00);
     side.name = 'side';
 
     const axes = new THREE.Object3D();
@@ -45,7 +48,10 @@ class Capsule {
         this.namePrefix = namePrefix;
 
         // set material
-        this.material = new THREE.MeshPhongMaterial({ color: this.color, shininess: 20 });
+        this.material = new THREE.MeshPhongMaterial({
+            color: this.color,
+            shininess: 20,
+        });
 
         // get branch cylinder
         const cylinder = this._getCylinder();
@@ -54,7 +60,7 @@ class Capsule {
         // get spherical branch edges (so that the final branch looks like a capsule)
         const sphereLower = this._getSphere(this.width, 'lower');
         sphereLower.position.set(0, 0, 0);
-    
+
         const sphereUpper = this._getSphere(this.width * this.ratio, 'upper');
         sphereUpper.position.set(0, this.height, 0);
 
@@ -69,9 +75,16 @@ class Capsule {
     }
 
     _getCylinder() {
-        const cylinderGeo = new THREE.CylinderBufferGeometry(this.width * this.ratio, this.width, this.height, 8);
+        const cylinderGeo = new THREE.CylinderBufferGeometry(
+            this.width * this.ratio,
+            this.width,
+            this.height,
+            8
+        );
         const cylinder = new THREE.Mesh(cylinderGeo, this.material);
-        cylinder.name = `${this.namePrefix}${this.namePrefix ? '-' : ''}cylinder`;
+        cylinder.name = `${this.namePrefix}${
+            this.namePrefix ? '-' : ''
+        }cylinder`;
 
         cylinder.castShadow = true;
 
@@ -81,8 +94,10 @@ class Capsule {
     _getSphere(diameter, name) {
         const sphereGeo = new THREE.SphereBufferGeometry(diameter, 8, 8);
         const sphere = new THREE.Mesh(sphereGeo, this.material);
-        sphere.name = `${this.namePrefix}${this.namePrefix ? '-' : ''}${name}-edge`;
+        sphere.name = `${this.namePrefix}${
+            this.namePrefix ? '-' : ''
+        }${name}-edge`;
 
-        return sphere
+        return sphere;
     }
 }

@@ -7,20 +7,26 @@
  *   |     |-- 'branch-cylinder' (THREE.Mesh) oriented along y-axis
  *   |     |-- 'branch-edge-low' [sphere] (THREE.Mesh)
  *   |     +-- 'branch-edge-high' [sphere] (THREE.Mesh)
- *   | 
+ *   |
  *   +-- 'axes' (THREE.Object3D())
  *         |-- 'fwd' (THREE.Line)
  *         |-- 'top' (THREE.Line)
  *         +-- 'side' (THREE.Line)
  *   ```
- * 
+ *
  *  - branch's core is not a "true" cylinder, but rather a bisected cone
  *  - in default state branch is oriented 'along' the y-axis
  *  - branch object's (0,0,0) is at the center of its "lower" edge (lower in default state)
  */
 class Branch extends Part {
-    constructor( len=1., wid=0.1, color='#FFAA00', ratio=1., visibleAxes=false) {
-        super( len, wid, wid, color, visibleAxes );
+    constructor(
+        len = 1,
+        wid = 0.1,
+        color = '#FFAA00',
+        ratio = 1,
+        visibleAxes = false
+    ) {
+        super(len, wid, wid, color, visibleAxes);
         this._ratio = ratio;
         this._create(visibleAxes);
     }
@@ -29,15 +35,19 @@ class Branch extends Part {
         return new BranchBuilder();
     }
 
-    get ratio() { return this._ratio; }
+    get ratio() {
+        return this._ratio;
+    }
 
-    get color() { return this._color; }
+    get color() {
+        return this._color;
+    }
 
     set ratio(val) {
         // change branch's top-to-bottom width ratio
-        // recall: branch's core is not a "true" cylinder, but rather a bisected cone 
+        // recall: branch's core is not a "true" cylinder, but rather a bisected cone
         // with bottom base larger than the upper base;
-        // when top-to-bottom base ratio is changed we need to 
+        // when top-to-bottom base ratio is changed we need to
         // replace cylinder geometry and rescale the top sphere
 
         this._ratio = val;
@@ -45,13 +55,18 @@ class Branch extends Part {
         const [cylinder, sphere1, sphere2] = capsule.children;
 
         // replace cylinder geometry entirely...
-        cylinder.geometry = new THREE.CylinderGeometry(this.wid * val, this.wid, this.len, 8);
+        cylinder.geometry = new THREE.CylinderGeometry(
+            this.wid * val,
+            this.wid,
+            this.len,
+            8
+        );
 
         // rescale top sphere
         sphere2.geometry = new THREE.SphereGeometry(this.wid * val);
     }
 
-    set color (val) {
+    set color(val) {
         this._color = val;
         const segments = this.obj.children;
         segments.forEach((segment) => {
@@ -61,7 +76,7 @@ class Branch extends Part {
 
             segment.children.forEach((primitive) => {
                 primitive.material.color.set(val);
-            })
+            });
         });
     }
 
@@ -69,22 +84,28 @@ class Branch extends Part {
         return super.scale;
     }
 
-    set scale (xyz) {
+    set scale(xyz) {
         const [x, y, z] = xyz;
         const cylinder = this.obj.children[0].children[0];
         const sphere1 = this.obj.children[0].children[1];
         const sphere2 = this.obj.children[0].children[2];
-        
+
         cylinder.scale.set(x, y, z);
         sphere1.scale.set(x, x, z);
         sphere2.scale.set(x, x, z);
     }
 
     makeCapsule() {
-        return new Capsule(this.len, this.wid, this.ratio, this.color, 'branch');
+        return new Capsule(
+            this.len,
+            this.wid,
+            this.ratio,
+            this.color,
+            'branch'
+        );
     }
 
-    rescale( x, y, z ) {
+    rescale(x, y, z) {
         // rescale the branch to fit new dimensions:
         // x, y, z - are new width, length and depth
         // recall: in default state branch is oriented 'along' the y-axis
@@ -100,11 +121,11 @@ class Branch extends Part {
         const sphere1 = branch.children[0].children[1];
         const sphere2 = branch.children[0].children[2];
 
-        cylinder.scale.set( x / this.wid0, y / this.len0, z / this.wid0 );
-        sphere1.scale.set( x / this.wid0, x / this.wid0, x / this.wid0 );
-        sphere2.scale.set( x / this.wid0, x / this.wid0, x / this.wid0 );
+        cylinder.scale.set(x / this.wid0, y / this.len0, z / this.wid0);
+        sphere1.scale.set(x / this.wid0, x / this.wid0, x / this.wid0);
+        sphere2.scale.set(x / this.wid0, x / this.wid0, x / this.wid0);
 
-        cylinder.position.set(0, y/2, 0);
+        cylinder.position.set(0, y / 2, 0);
         sphere2.position.set(0, y, 0);
     }
 
@@ -112,8 +133,8 @@ class Branch extends Part {
         // branch capsule
         this.capsule = this.makeCapsule();
 
-        // branch axes        
-        this.axes = makeAxes( visibleAxes ); // defined in Part class
+        // branch axes
+        this.axes = makeAxes(visibleAxes); // defined in Part class
 
         // combine capsule + axes into final object
         this.obj = new THREE.Object3D();
@@ -123,15 +144,27 @@ class Branch extends Part {
         return this.obj;
     }
 
-    static create(len=1., wid=0.1, color=0xFFAA00, ratio=1., visibleAxes=false) {
+    static create(
+        len = 1,
+        wid = 0.1,
+        color = 0xffaa00,
+        ratio = 1,
+        visibleAxes = false
+    ) {
         return new Branch(len, wid, color, ratio, visibleAxes);
     }
 
-    static copy(ref, lvl=0) {
+    static copy(ref, lvl = 0) {
         // lvl indicates how "far" is branch from root;
         // if ratio is not 1 - it would affect the width (and in the future maybe len too)
         const wid = ref.wid * Math.pow(ref.ratio, lvl);
-        const branch = new Branch(ref.len, wid, ref.color, ref.ratio, ref.visibleAxes);
+        const branch = new Branch(
+            ref.len,
+            wid,
+            ref.color,
+            ref.ratio,
+            ref.visibleAxes
+        );
         branch.color = ref.color; // this needs to be set explicitly... :/
 
         // set position and orientation
@@ -140,7 +173,7 @@ class Branch extends Part {
         return branch;
     }
 
-    update(ref, lvl=0) {
+    update(ref, lvl = 0) {
         // Updates geometry (with rescale based on lvl), position and orientation
         // based to reference ref.
         // To rescale branch we could do something like:
@@ -152,25 +185,25 @@ class Branch extends Part {
 
         // udpate ratio
         this.ratio = ref.ratio;
-        
+
         // change geometry for primitives
-        // (for cylinder we need to redefine geometry, 
+        // (for cylinder we need to redefine geometry,
         // because its top and bottom can scale differently depending on ratio;
         // for spheres it's sufficient just to scale)
         cylinder.geometry = new THREE.CylinderGeometry(
-            ref.wid * ref.ratio * Math.pow(ref.ratio, lvl), 
-            ref.wid * Math.pow(ref.ratio, lvl), 
-            ref.len, 
+            ref.wid * ref.ratio * Math.pow(ref.ratio, lvl),
+            ref.wid * Math.pow(ref.ratio, lvl),
+            ref.len,
             8
         );
         // sphere1.geometry = new THREE.SphereGeometry(ref.wid * Math.pow(ref.ratio, lvl), 8);
         // sphere2.geometry = new THREE.SphereGeometry(ref.wid * ref.ratio * Math.pow(ref.ratio, lvl), 8);
-        const scale = ref.wid / this.wid * Math.pow(this.ratio, lvl);
-        sphere1.scale.set(scale, scale, scale);        
+        const scale = (ref.wid / this.wid) * Math.pow(this.ratio, lvl);
+        sphere1.scale.set(scale, scale, scale);
         sphere2.scale.set(scale, scale, scale);
 
         // rearrange primitives within this.obj
-        cylinder.position.set(0, ref.len/2, 0);
+        cylinder.position.set(0, ref.len / 2, 0);
         sphere2.position.set(0, ref.len, 0);
 
         // update color
@@ -184,11 +217,11 @@ class Branch extends Part {
 
 class BranchBuilder {
     constructor() {
-        this._len = 1.;
-        this._wid = 1.;
-        this._dep = 1.;
+        this._len = 1;
+        this._wid = 1;
+        this._dep = 1;
         this._col = '#ff0000';
-        this._rat = 1.;
+        this._rat = 1;
         this._visibleAces = false;
     }
 
@@ -223,6 +256,12 @@ class BranchBuilder {
     }
 
     build() {
-        return new Branch(this._len, this._wid, this._col, this._rat, this._visibleAxes);
+        return new Branch(
+            this._len,
+            this._wid,
+            this._col,
+            this._rat,
+            this._visibleAxes
+        );
     }
 }

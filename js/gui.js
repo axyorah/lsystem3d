@@ -34,21 +34,20 @@ const ruleLInpt = document.querySelector('#rule-L');
 const rulePopup = document.querySelector('#rule-popup');
 const rulePopupLbl = document.querySelector('#rule-popup-lbl');
 
-
 undoBtn.addEventListener('click', function (evt) {
     lsys.prev();
     lsys.build();
-})
+});
 
 restartBtn.addEventListener('click', function (evt) {
     lsys.reset();
     lsys.build();
-})
+});
 
-updateBtn.addEventListener('click', function (evt) {  
+updateBtn.addEventListener('click', function (evt) {
     lsys.next();
     lsys.build();
-})
+});
 
 branchLenRng.addEventListener('input', function (evt) {
     // recall: branchWid represents a fraction [0,1] from branchLen
@@ -59,29 +58,33 @@ branchLenRng.addEventListener('input', function (evt) {
     lsys.map['F'].len = parseFloat(val);
     lsys.map['F'].wid = parseFloat(val) * fraction;
     lsys.update();
-})
+});
 
 branchWidRng.addEventListener('input', function (evt) {
     // recall: branchWid represents a fraction [0,1] from branchLen
     const fraction = parseFloat(this.value);
     const val = parseFloat(branchLenRng.value) * fraction;
-    branchWidLbl.innerText = `${branchWidLbl.innerText.split(':')[0]}: ${fraction}`;
+    branchWidLbl.innerText = `${
+        branchWidLbl.innerText.split(':')[0]
+    }: ${fraction}`;
     lsys.map['F'].wid = parseFloat(val);
     lsys.update();
-})
+});
 
 branchRatioRng.addEventListener('input', function (evt) {
-    const val  = this.value;
-    branchRatioLbl.innerText = `${branchRatioLbl.innerText.split(':')[0]}: ${val}`;
+    const val = this.value;
+    branchRatioLbl.innerText = `${
+        branchRatioLbl.innerText.split(':')[0]
+    }: ${val}`;
     lsys.map['F'].ratio = parseFloat(val);
     lsys.update();
-})
+});
 
 branchColor.addEventListener('change', function (evt) {
     const val = this.value;
     lsys.map['F'].color = val;
     lsys.update();
-})
+});
 
 leafLenRng.addEventListener('input', function (evt) {
     // recall: branchWid represents a fraction [0,1] from branchLen
@@ -89,7 +92,7 @@ leafLenRng.addEventListener('input', function (evt) {
     leafLenLbl.innerText = `${leafLenLbl.innerText.split(':')[0]}: ${val}`;
     lsys.map['L'].len = parseFloat(val);
     lsys.update();
-})
+});
 
 leafWidRng.addEventListener('input', function (evt) {
     // recall: branchWid represents a fraction [0,1] from branchLen
@@ -97,7 +100,7 @@ leafWidRng.addEventListener('input', function (evt) {
     leafWidLbl.innerText = `${leafWidLbl.innerText.split(':')[0]}: ${val}`;
     lsys.map['L'].wid = parseFloat(val);
     lsys.update();
-})
+});
 
 leafDepRng.addEventListener('input', function (evt) {
     // recall: branchWid represents a fraction [0,1] from branchLen
@@ -105,65 +108,65 @@ leafDepRng.addEventListener('input', function (evt) {
     leafDepLbl.innerText = `${leafDepLbl.innerText.split(':')[0]}: ${val}`;
     lsys.map['L'].dep = parseFloat(val);
     lsys.update();
-})
+});
 
 leafColor.addEventListener('change', function (evt) {
     const val = this.value;
     lsys.map['L'].color = val;
     lsys.update();
-})
+});
 
 yawRng.addEventListener('input', function (evt) {
     const val = this.value;
     yawLbl.innerText = `${yawLbl.innerText.split(':')[0]}: ${val}`;
     lsys.yaw = parseFloat(val);
-    lsys.update()
-})
+    lsys.update();
+});
 
 pitchRng.addEventListener('input', function (evt) {
     const val = this.value;
     pitchLbl.innerText = `${pitchLbl.innerText.split(':')[0]}: ${val}`;
     lsys.pitch = parseFloat(val);
     lsys.update();
-})
+});
 
 rollRng.addEventListener('input', function (evt) {
     const val = this.value;
     rollLbl.innerText = `${rollLbl.innerText.split(':')[0]}: ${val}`;
     lsys.roll = parseFloat(val);
     lsys.update();
-})
+});
 
 ruleXInpt.addEventListener('change', function (evt) {
     const val = this.value;
-    lsys.rules = {'X': val}
+    lsys.rules = { X: val };
 
     lsys.prev();
     lsys.next();
     lsys.build();
-})
+});
 
 ruleFInpt.addEventListener('change', function (evt) {
     const val = this.value;
-    lsys.rules = {'F': val};
+    lsys.rules = { F: val };
 
     lsys.prev();
     lsys.next();
     lsys.build();
-})
+});
 
 ruleLInpt.addEventListener('change', function (evt) {
     const val = this.value;
-    lsys.rules = {'L': val};
+    lsys.rules = { L: val };
 
     lsys.prev();
     lsys.next();
     lsys.build();
-})
+});
 
 rulePopupLbl.addEventListener('click', function (evt) {
     rulePopup.classList.toggle('show');
-})
+});
 
 window.addEventListener('load', (evt) => {
     // default settings

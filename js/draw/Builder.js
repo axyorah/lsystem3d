@@ -7,13 +7,13 @@ class Builder {
         // creates new buffer geometry;
         // use it if lsystem state has been incremented or rules have been changed
         let lvl = 0;
-        
+
         // reset turtle
         this.turtle.reset();
 
         // initiate position/orientation stacks
         const stack = [];
-        
+
         // make temp Object3D to store geometry
         const obj = new THREE.Object3D();
         // make new geometries
@@ -28,21 +28,25 @@ class Builder {
 
                 this.turtle.forward(copy.len);
                 lsystem.partsByUuid[copy.obj.uuid] = copy;
-            }
-            else if (sym === '+') this.turtle.yawBy( lsystem.yaw * Math.PI / 180 )
-            else if (sym === '-') this.turtle.yawBy(-lsystem.yaw * Math.PI / 180 )
-            else if (sym === '^') this.turtle.pitchBy( lsystem.pitch * Math.PI / 180 )
-            else if (sym === 'v') this.turtle.pitchBy(-lsystem.pitch * Math.PI / 180 )
-            else if (sym === 'd') this.turtle.rollBy( lsystem.roll * Math.PI / 180 )
-            else if (sym === 'b') this.turtle.rollBy(-lsystem.roll * Math.PI / 180 )
+            } else if (sym === '+')
+                this.turtle.yawBy((lsystem.yaw * Math.PI) / 180);
+            else if (sym === '-')
+                this.turtle.yawBy((-lsystem.yaw * Math.PI) / 180);
+            else if (sym === '^')
+                this.turtle.pitchBy((lsystem.pitch * Math.PI) / 180);
+            else if (sym === 'v')
+                this.turtle.pitchBy((-lsystem.pitch * Math.PI) / 180);
+            else if (sym === 'd')
+                this.turtle.rollBy((lsystem.roll * Math.PI) / 180);
+            else if (sym === 'b')
+                this.turtle.rollBy((-lsystem.roll * Math.PI) / 180);
             else if (sym === '[') {
                 stack.push({
                     pos: this.turtle.position,
                     quaternion: this.turtle.obj.quaternion.clone(),
-                    lvl: lvl
+                    lvl: lvl,
                 });
-            }
-            else if (sym === ']') {
+            } else if (sym === ']') {
                 if (stack.length > 0) {
                     const { pos, quaternion, lvl: lvlUpdate } = stack.pop();
                     this.turtle.moveTo(pos);
@@ -69,7 +73,7 @@ class Builder {
         // use it if dimensions/orientation were changed
 
         // if there's nothing to update - exit
-        if ( !lsystem.obj.children.length ) {
+        if (!lsystem.obj.children.length) {
             return;
         }
 
@@ -95,21 +99,25 @@ class Builder {
 
                 iSegment += 1;
                 this.turtle.forward(lsystem.map[sym].len);
-            }
-            else if (sym === '+') this.turtle.yawBy( lsystem.yaw * Math.PI / 180 )
-            else if (sym === '-') this.turtle.yawBy(-lsystem.yaw * Math.PI / 180 )
-            else if (sym === '^') this.turtle.pitchBy( lsystem.pitch * Math.PI / 180 )
-            else if (sym === 'v') this.turtle.pitchBy(-lsystem.pitch * Math.PI / 180 )
-            else if (sym === 'd') this.turtle.rollBy( lsystem.roll * Math.PI / 180 )
-            else if (sym === 'b') this.turtle.rollBy(-lsystem.roll * Math.PI / 180 )
+            } else if (sym === '+')
+                this.turtle.yawBy((lsystem.yaw * Math.PI) / 180);
+            else if (sym === '-')
+                this.turtle.yawBy((-lsystem.yaw * Math.PI) / 180);
+            else if (sym === '^')
+                this.turtle.pitchBy((lsystem.pitch * Math.PI) / 180);
+            else if (sym === 'v')
+                this.turtle.pitchBy((-lsystem.pitch * Math.PI) / 180);
+            else if (sym === 'd')
+                this.turtle.rollBy((lsystem.roll * Math.PI) / 180);
+            else if (sym === 'b')
+                this.turtle.rollBy((-lsystem.roll * Math.PI) / 180);
             else if (sym === '[') {
                 stack.push({
                     pos: this.turtle.position,
                     quaternion: this.turtle.orientation,
-                    lvl: lvl
+                    lvl: lvl,
                 });
-            }
-            else if (sym === ']') {
+            } else if (sym === ']') {
                 if (stack.length > 0) {
                     const { pos, quaternion, lvl: lvlUpdate } = stack.pop();
                     this.turtle.moveTo(pos);
@@ -118,7 +126,7 @@ class Builder {
                 }
             }
         }
-        
+
         // reset turtle
         this.turtle.reset();
     }

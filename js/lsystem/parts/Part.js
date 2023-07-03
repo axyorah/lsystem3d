@@ -1,5 +1,11 @@
 class Part {
-    constructor( len=1., wid=0.5, dep=0.5, color='#ff0000', visibleAxes=false ) {
+    constructor(
+        len = 1,
+        wid = 0.5,
+        dep = 0.5,
+        color = '#ff0000',
+        visibleAxes = false
+    ) {
         this._len0 = len;
         this._wid0 = wid;
         this._dep0 = dep;
@@ -10,10 +16,10 @@ class Part {
 
         this._color = color;
 
-        this.mat;  // material
+        this.mat; // material
         this.capsule; // THREE.Object3D which contains mesh(es) of the actual part
         this.axes; // axes that show part's orientation (needed for aligning the object to vectors)
-        this.obj;  // capsule + axes (use this to rescale/reposition/reorient)
+        this.obj; // capsule + axes (use this to rescale/reposition/reorient)
 
         this._create(visibleAxes); // set
     }
@@ -22,25 +28,45 @@ class Part {
         return new PartBuilder();
     }
 
-    get len0() { return this._len0; }
-    get wid0() { return this._wid0; }
-    get dep0() { return this._dep0; }
-    get len() { return this._len; }
-    get wid() { return this._wid; }
-    get dep() { return this._dep; }
-    get scale() { 
+    get len0() {
+        return this._len0;
+    }
+    get wid0() {
+        return this._wid0;
+    }
+    get dep0() {
+        return this._dep0;
+    }
+    get len() {
+        return this._len;
+    }
+    get wid() {
+        return this._wid;
+    }
+    get dep() {
+        return this._dep;
+    }
+    get scale() {
         return [
-            this._wid / this._wid0, 
+            this._wid / this._wid0,
             this._len / this._len0,
             this._dep / this._dep0,
-        ]; 
+        ];
     }
 
-    get roll() { return this._roll; }
-    get pitch() { return this._pitch; }
-    get yaw() { return this._yaw; }
+    get roll() {
+        return this._roll;
+    }
+    get pitch() {
+        return this._pitch;
+    }
+    get yaw() {
+        return this._yaw;
+    }
 
-    get color() { return this._color; }
+    get color() {
+        return this._color;
+    }
 
     get position() {
         return this.obj.position.clone();
@@ -56,7 +82,9 @@ class Part {
         // (corresponds to unit-vector in positive y-axis at default branch orientation)
         let fwdPos = new THREE.Vector3();
         this.axes.children[0].getWorldPosition(fwdPos);
-        return fwdPos.add( this.capsule.position.clone().multiplyScalar( -1 ) ).normalize();
+        return fwdPos
+            .add(this.capsule.position.clone().multiplyScalar(-1))
+            .normalize();
     }
 
     get top() {
@@ -64,7 +92,9 @@ class Part {
         // (corresponds to unit-vector in positive z-axis at default branch orientation)
         let topPos = new THREE.Vector3();
         this.axes.children[1].getWorldPosition(topPos);
-        return topPos.add( this.capsule.position.clone().multiplyScalar( -1 ) ).normalize();
+        return topPos
+            .add(this.capsule.position.clone().multiplyScalar(-1))
+            .normalize();
     }
 
     get side() {
@@ -72,53 +102,61 @@ class Part {
         // (corresponds to unit-vector in positive x-axis at default branch orientation)
         let sidePos = new THREE.Vector3();
         this.axes.children[2].getWorldPosition(sidePos);
-        return sidePos.add( this.capsule.position.clone().multiplyScalar( -1 ) ).normalize();
+        return sidePos
+            .add(this.capsule.position.clone().multiplyScalar(-1))
+            .normalize();
     }
 
-    set wid( val ) { 
+    set wid(val) {
         this._wid = val;
-        this.obj.scale.set( val / this._wid0, 1, 1 );
+        this.obj.scale.set(val / this._wid0, 1, 1);
     }
-    set len( val ) { 
+    set len(val) {
         this._len = val;
-        this.obj.scale.set( 1, val / this._len0, 1 );
+        this.obj.scale.set(1, val / this._len0, 1);
     }
-    set dep( val ) { 
+    set dep(val) {
         this._dep = val;
-        this.obj.scale.set( 1, 1, val / this._dep0);
+        this.obj.scale.set(1, 1, val / this._dep0);
     }
-    set scale (args) {
+    set scale(args) {
         const [x, y, z] = args;
         this._wid = x * this._wid0;
         this._len = y * this._len0;
         this._dep = z * this._dep0;
-        this.obj.scale.set( x, y, z );
+        this.obj.scale.set(x, y, z);
     }
-    set color( val ) {
+    set color(val) {
         this._color = val;
-        this.capsule.children.map( (primitive) => primitive.material.color.set(val) );
+        this.capsule.children.map((primitive) =>
+            primitive.material.color.set(val)
+        );
     }
 
-    set position( val ) {
-        if ( !(val instanceof( THREE.Vector3 )) ) {
-            throw new TypeError(`Argument for 'Turtle.moveTo' should be of type 'THREE.Vector3' but got ${val}`);
+    set position(val) {
+        if (!(val instanceof THREE.Vector3)) {
+            throw new TypeError(
+                `Argument for 'Turtle.moveTo' should be of type 'THREE.Vector3' but got ${val}`
+            );
         }
-        this.obj.position.set( val.x, val.y, val.z );
+        this.obj.position.set(val.x, val.y, val.z);
     }
 
-    set orientation( val ) {
-        if ( !(val instanceof( THREE.Quaternion )) ) {
-            throw TypeError(`Argument for 'Turtle.orientation' should be of type 'THREE.Quaternion' but got ${val}`);
+    set orientation(val) {
+        if (!(val instanceof THREE.Quaternion)) {
+            throw TypeError(
+                `Argument for 'Turtle.orientation' should be of type 'THREE.Quaternion' but got ${val}`
+            );
         }
-        this.obj.setRotationFromQuaternion( val );
+        this.obj.setRotationFromQuaternion(val);
     }
 
     _create(visibleAxes) {
         // capsule
         this.capsule = new THREE.Object3D();
 
-        // axes        
-        this.axes = makeAxes( visibleAxes );
+        // axes
+        this.axes = makeAxes(visibleAxes);
 
         // combine capsule + axes into final object
         this.obj = new THREE.Object3D();
@@ -128,15 +166,21 @@ class Part {
         return this.obj;
     }
 
-    static create(len=1., wid=0.5, dep=0.5, color='#ff0000', visibleAxes=false) {
+    static create(
+        len = 1,
+        wid = 0.5,
+        dep = 0.5,
+        color = '#ff0000',
+        visibleAxes = false
+    ) {
         return new Part(len, wid, dep, color, visibleAxes);
     }
 
-    /** 
-     * creates a new part with geometry, color, position and orientation 
-     * copied from the reference and scaled based on the `lvl` 
+    /**
+     * creates a new part with geometry, color, position and orientation
+     * copied from the reference and scaled based on the `lvl`
      * ("distance" from lsystem root)
-     * @param {*} ref [Part] instance of `Part` class used as a reference 
+     * @param {*} ref [Part] instance of `Part` class used as a reference
      * @param {*} lvl [number] indicates "distance" from lsystem root
      */
     static copy(ref) {
@@ -146,38 +190,44 @@ class Part {
     /**
      * updates 'this' part geometry, color, position and orientation
      * based from `ref` and scales it based on `lvl` ("distance" from lsystem root)
-     * @param {*} ref [Part] instance of `Part` class used as a reference 
+     * @param {*} ref [Part] instance of `Part` class used as a reference
      * @param {*} lvl [number] indicates "distance" from lsystem root
      */
-    update(ref, lvl=0) {
+    update(ref, lvl = 0) {
         throw new Error('Not implemented');
     }
 
-    moveTo( position ) {
+    moveTo(position) {
         // move branch to a specified position (THREE.Vector3)
-        if ( !(position instanceof( THREE.Vector3 )) ) {
-            throw new TypeError(`Argument of 'moveTo' should be of type 'THREE.Vector3' but got ${position}`);
+        if (!(position instanceof THREE.Vector3)) {
+            throw new TypeError(
+                `Argument of 'moveTo' should be of type 'THREE.Vector3' but got ${position}`
+            );
         }
-        this.obj.position.set( position.x, position.y, position.z );
+        this.obj.position.set(position.x, position.y, position.z);
     }
 
-    orient( quaternion ) {
+    orient(quaternion) {
         // orient branch as specified by the quaternion (THREE.Quaternion);
-        if ( !(quaternion instanceof( THREE.Quaternion )) ) {
-            throw TypeError(`Argument for 'orient' should be of type 'THREE.Quaternion' but got ${quaternion}`);
+        if (!(quaternion instanceof THREE.Quaternion)) {
+            throw TypeError(
+                `Argument for 'orient' should be of type 'THREE.Quaternion' but got ${quaternion}`
+            );
         }
-        this.obj.setRotationFromQuaternion( quaternion );
+        this.obj.setRotationFromQuaternion(quaternion);
     }
 
-    rescale( x, y, z ) {
+    rescale(x, y, z) {
         // rescale the part to fit new dimensions
-        this.obj.scale.set( x / this._wid0, y / this._len0, z / this._dep0 );
+        this.obj.scale.set(x / this._wid0, y / this._len0, z / this._dep0);
     }
 
-    recolor( color ) {
+    recolor(color) {
         // recolor the object
         // (assumed that THREE.Mesh objects are stored in this.capsule)
-        this.capsule.children.map( (primitive) => primitive.material.color.set(color) );
+        this.capsule.children.map((primitive) =>
+            primitive.material.color.set(color)
+        );
     }
 }
 
