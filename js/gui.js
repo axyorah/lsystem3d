@@ -58,7 +58,7 @@ branchLenRng.addEventListener('input', function (evt) {
     const fraction = parseFloat(branchWidRng.value);
     lsys.map['F'].len = parseFloat(val);
     lsys.map['F'].wid = parseFloat(val) * fraction;
-    lsys.build(); // <-- should be update!!!
+    lsys.update();
 })
 
 branchWidRng.addEventListener('input', function (evt) {
@@ -67,20 +67,20 @@ branchWidRng.addEventListener('input', function (evt) {
     const val = parseFloat(branchLenRng.value) * fraction;
     branchWidLbl.innerText = `${branchWidLbl.innerText.split(':')[0]}: ${fraction}`;
     lsys.map['F'].wid = parseFloat(val);
-    lsys.build(); // <-- should be update!!!
+    lsys.update();
 })
 
 branchRatioRng.addEventListener('input', function (evt) {
     const val  = this.value;
     branchRatioLbl.innerText = `${branchRatioLbl.innerText.split(':')[0]}: ${val}`;
     lsys.map['F'].ratio = parseFloat(val);
-    lsys.build(); // <-- should be udpate!!!
+    lsys.update();
 })
 
 branchColor.addEventListener('change', function (evt) {
     const val = this.value;
     lsys.map['F'].color = val;
-    lsys.build(); // <--
+    lsys.update();
 })
 
 leafLenRng.addEventListener('input', function (evt) {
@@ -88,7 +88,7 @@ leafLenRng.addEventListener('input', function (evt) {
     const val = this.value;
     leafLenLbl.innerText = `${leafLenLbl.innerText.split(':')[0]}: ${val}`;
     lsys.map['L'].len = parseFloat(val);
-    lsys.build(); // <--
+    lsys.update();
 })
 
 leafWidRng.addEventListener('input', function (evt) {
@@ -96,7 +96,7 @@ leafWidRng.addEventListener('input', function (evt) {
     const val = this.value;
     leafWidLbl.innerText = `${leafWidLbl.innerText.split(':')[0]}: ${val}`;
     lsys.map['L'].wid = parseFloat(val);
-    lsys.build(); // <--
+    lsys.update();
 })
 
 leafDepRng.addEventListener('input', function (evt) {
@@ -104,34 +104,34 @@ leafDepRng.addEventListener('input', function (evt) {
     const val = this.value;
     leafDepLbl.innerText = `${leafDepLbl.innerText.split(':')[0]}: ${val}`;
     lsys.map['L'].dep = parseFloat(val);
-    lsys.build(); // <--
+    lsys.update();
 })
 
 leafColor.addEventListener('change', function (evt) {
     const val = this.value;
     lsys.map['L'].color = val;
-    lsys.build(); // <--
+    lsys.update();
 })
 
 yawRng.addEventListener('input', function (evt) {
     const val = this.value;
     yawLbl.innerText = `${yawLbl.innerText.split(':')[0]}: ${val}`;
     lsys.yaw = parseFloat(val);
-    lsys.build(); // <--!!!
+    lsys.update()
 })
 
 pitchRng.addEventListener('input', function (evt) {
     const val = this.value;
     pitchLbl.innerText = `${pitchLbl.innerText.split(':')[0]}: ${val}`;
     lsys.pitch = parseFloat(val);
-    lsys.build(); // <--
+    lsys.update();
 })
 
 rollRng.addEventListener('input', function (evt) {
     const val = this.value;
     rollLbl.innerText = `${rollLbl.innerText.split(':')[0]}: ${val}`;
     lsys.roll = parseFloat(val);
-    lsys.build(); // <--
+    lsys.update();
 })
 
 ruleXInpt.addEventListener('change', function (evt) {
