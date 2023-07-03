@@ -86,13 +86,13 @@ class Builder {
         // update existing geometries
         for (let sym of lsystem.states.at(-1)) {
             if (lsystem.map[sym]) {
+                lvl += 1;
                 const part = lsystem.partsByUuid[segments[iSegment].uuid];
 
                 lsystem.map[sym].position = this.turtle.position;
                 lsystem.map[sym].orientation = this.turtle.orientation;
                 part.update(lsystem.map[sym], lvl);
 
-                lvl += 1;
                 iSegment += 1;
                 this.turtle.forward(lsystem.map[sym].len);
             }

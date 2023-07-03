@@ -21,12 +21,8 @@ class Branch extends Part {
         // replace cylinder geometry and rescale the top sphere
 
         this._ratio = val;
-        const branch = this.obj;
-        const capsule = branch.children[0];
-
-        const cylinder = capsule.children[0];
-        const sphere1 = capsule.children[1];
-        const sphere2 = capsule.children[2];
+        const capsule = this.obj.children[0];
+        const [cylinder, sphere1, sphere2] = capsule.children;
 
         // replace cylinder geometry entirely...
         cylinder.geometry = new THREE.CylinderGeometry(this.wid * val, this.wid, this.len, 8);
@@ -155,17 +151,10 @@ class Branch extends Part {
             8
         );
         // sphere1.geometry = new THREE.SphereGeometry(part.wid * Math.pow(part.ratio, lvl), 8);
-        sphere1.scale.set(            
-            part.wid / this.wid * Math.pow(this.ratio, lvl),
-            part.wid / this.wid * Math.pow(this.ratio, lvl),
-            part.wid / this.wid * Math.pow(this.ratio, lvl)
-        );
         // sphere2.geometry = new THREE.SphereGeometry(part.wid * part.ratio * Math.pow(part.ratio, lvl), 8);
-        sphere2.scale.set(
-            part.wid / this.wid * this.ratio * Math.pow(this.ratio, lvl), 
-            part.wid / this.wid * this.ratio * Math.pow(this.ratio, lvl), 
-            part.wid / this.wid * this.ratio * Math.pow(this.ratio, lvl)
-        );
+        const scale = part.wid / this.wid * Math.pow(this.ratio, lvl);
+        sphere1.scale.set(scale, scale, scale);        
+        sphere2.scale.set(scale, scale, scale);
 
         // rearrange primitives within this.obj
         cylinder.position.set(0, part.len/2, 0);
