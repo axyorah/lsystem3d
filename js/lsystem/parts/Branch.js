@@ -1,3 +1,23 @@
+/**
+ * Branch wrapper for a THREE.Object3D with some handy methods.
+ * `this.obj` is a THREE.Object3D() with name `branch` and the following structure:
+ *  ```
+ * 'branch' (THREE.Object3D())
+ *   |-- 'branch-capsule' (THREE.Object3D())
+ *   |     |-- 'branch-cylinder' (THREE.Mesh) oriented along y-axis
+ *   |     |-- 'branch-edge-low' [sphere] (THREE.Mesh)
+ *   |     +-- 'branch-edge-high' [sphere] (THREE.Mesh)
+ *   | 
+ *   +-- 'axes' (THREE.Object3D())
+ *         |-- 'fwd' (THREE.Line)
+ *         |-- 'top' (THREE.Line)
+ *         +-- 'side' (THREE.Line)
+ *   ```
+ * 
+ *  - branch's core is not a "true" cylinder, but rather a bisected cone
+ *  - in default state branch is oriented 'along' the y-axis
+ *  - branch object's (0,0,0) is at the center of its "lower" edge (lower in default state)
+ */
 class Branch extends Part {
     constructor( len=1., wid=0.1, color='#FFAA00', ratio=1., visibleAxes=false) {
         super( len, wid, wid, color, visibleAxes );
@@ -68,22 +88,11 @@ class Branch extends Part {
         // rescale the branch to fit new dimensions:
         // x, y, z - are new width, length and depth
         // recall: in default state branch is oriented 'along' the y-axis
-        // branch is a THREE.Object3D() with the following structure:
-        // 'branch' (THREE.Object3D())
-        //   |-- 'branch-capsule' (THREE.Object3D())
-        //   |     |-- 'branch-cylinder' (THREE.Mesh) oriented along y-axis
-        //   |     |-- 'branch-edge-low' [sphere] (THREE.Mesh)
-        //   |     +-- 'branch-edge-high' [sphere] (THREE.Mesh)
-        //   | 
-        //   +-- 'axes' (THREE.Object3D())
-        //         |-- 'fwd' (THREE.Line)
-        //         |-- 'top' (THREE.Line)
-        //         |-- 'side' (THREE.Line)
         // To rescale branch we could do something like:
         //     this.obj.scale.set( x / this.wid0, y / this.len0, z / this.wid0 );
         // but this distorts the edges;
         // we want the edges to remain perfect spheres at all scales,
-        // so we only rescale the cylinder
+        // so we rescale spheres and cylinder separately
 
         const branch = this.obj;
 
@@ -118,15 +127,32 @@ class Branch extends Part {
         return new Branch(len, wid, color, ratio, visibleAxes);
     }
 
-    static copy(part, lvl=0) {
+    /** 
+     * creates a new branch with geometry, color, position and orientation 
+     * copied from the reference and scaled based on the `lvl` 
+     * ("distance" from lsystem root)
+     * @param {*} part [Part] instance of `Part` class used as a reference 
+     * @param {*} lvl [number] indicates "distance" from lsystem root
+     */
+    static copy(ref, lvl=0) {
         // lvl indicates how "far" is branch from root;
         // if ratio is not 1 - it would affect the width (and in the future maybe len too)
-        const wid = part.wid * Math.pow(part.ratio, lvl);
-        const branch = new Branch(part.len, wid, part.color, part.ratio, part.visibleAxes);
-        branch.color = part.color; // this needs to be set explicitly... :/
+        const wid = ref.wid * Math.pow(ref.ratio, lvl);
+        const branch = new Branch(ref.len, wid, ref.color, ref.ratio, ref.visibleAxes);
+        branch.color = ref.color; // this needs to be set explicitly... :/
+
+        // set position and orientation
+        branch.position = ref.position;
+        branch.orientation = ref.orientation;
         return branch;
     }
 
+    /**
+     * updates 'this' branch geometry, color, position and orientation
+     * based from `ref` and scales it based on `lvl` ("distance" from lsystem root)
+     * @param {*} part [Part] instance of `Part` class used as a reference 
+     * @param {*} lvl [number] indicates "distance" from lsystem root
+     */
     update(part, lvl) {
         // Updates geometry (with rescale based on lvl), position and orientation
         // based to reference part.
@@ -181,26 +207,32 @@ class BranchBuilder {
 
     length(val) {
         this._len = val;
+        return this;
     }
 
     width(val) {
         this._wid = val;
+        return this;
     }
 
     depth(val) {
         this._dep = val;
+        return this;
     }
 
     color(val) {
         this._col = val;
+        return this;
     }
 
     ratio(val) {
         this._rat = val;
+        return this;
     }
 
     visibleAxes(val) {
         this._visibleAxes = val;
+        return this;
     }
 
     build() {
