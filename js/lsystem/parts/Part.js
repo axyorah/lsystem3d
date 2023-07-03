@@ -113,21 +113,6 @@ class Part {
         this.obj.setRotationFromQuaternion( val );
     }
 
-    update( map ) {
-        // if (!(map instanceof Object)) {
-        //     const msg = '`update` method takes an object ' +
-        //         'with keys being attributes that require an update ' +
-        //         'and values being the new values for these attributes, ' +
-        //         `got ${map}`;
-        //     throw new TypeError(msg);
-        // }
-        // Object.keys(map).forEach((key) => {
-        //     // TODO: check if setter exists?
-        //     this[key] = map[key];
-        // });
-        throw new Error('Not implemented');
-    }
-
     _create(visibleAxes) {
         // capsule
         this.capsule = new THREE.Object3D();
@@ -147,8 +132,25 @@ class Part {
         return new Part(len, wid, dep, color, visibleAxes);
     }
 
-    static copy(part) {
-        return new Part(part.len, part.wid, part.dep, part.color, part.visibleAxes);
+    /** 
+     * creates a new part with geometry, color, position and orientation 
+     * copied from the reference and scaled based on the `lvl` 
+     * ("distance" from lsystem root)
+     * @param {*} ref [Part] instance of `Part` class used as a reference 
+     * @param {*} lvl [number] indicates "distance" from lsystem root
+     */
+    static copy(ref) {
+        return new Part(ref.len, ref.wid, ref.dep, ref.color, ref.visibleAxes);
+    }
+
+    /**
+     * updates 'this' part geometry, color, position and orientation
+     * based from `ref` and scales it based on `lvl` ("distance" from lsystem root)
+     * @param {*} ref [Part] instance of `Part` class used as a reference 
+     * @param {*} lvl [number] indicates "distance" from lsystem root
+     */
+    update(ref, lvl=0) {
+        throw new Error('Not implemented');
     }
 
     moveTo( position ) {

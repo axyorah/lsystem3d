@@ -127,13 +127,6 @@ class Branch extends Part {
         return new Branch(len, wid, color, ratio, visibleAxes);
     }
 
-    /** 
-     * creates a new branch with geometry, color, position and orientation 
-     * copied from the reference and scaled based on the `lvl` 
-     * ("distance" from lsystem root)
-     * @param {*} part [Part] instance of `Part` class used as a reference 
-     * @param {*} lvl [number] indicates "distance" from lsystem root
-     */
     static copy(ref, lvl=0) {
         // lvl indicates how "far" is branch from root;
         // if ratio is not 1 - it would affect the width (and in the future maybe len too)
@@ -147,51 +140,45 @@ class Branch extends Part {
         return branch;
     }
 
-    /**
-     * updates 'this' branch geometry, color, position and orientation
-     * based from `ref` and scales it based on `lvl` ("distance" from lsystem root)
-     * @param {*} part [Part] instance of `Part` class used as a reference 
-     * @param {*} lvl [number] indicates "distance" from lsystem root
-     */
-    update(part, lvl) {
+    update(ref, lvl=0) {
         // Updates geometry (with rescale based on lvl), position and orientation
-        // based to reference part.
+        // based to reference ref.
         // To rescale branch we could do something like:
-        //     this.obj.scale.set( part.wid / part.wid0, part.len / part.len0, part.wid / part.wid0 );
+        //     this.obj.scale.set( ref.wid / ref.wid0, ref.len / ref.len0, ref.wid / ref.wid0 );
         // but this distorts the edges;
         // we want the edges to remain perfect spheres at all scales,
         // so we deconstruct the capsule the scale individual parts separately
         const [cylinder, sphere1, sphere2] = this.obj.children[0].children;
 
         // udpate ratio
-        this.ratio = part.ratio;
+        this.ratio = ref.ratio;
         
         // change geometry for primitives
         // (for cylinder we need to redefine geometry, 
         // because its top and bottom can scale differently depending on ratio;
         // for spheres it's sufficient just to scale)
         cylinder.geometry = new THREE.CylinderGeometry(
-            part.wid * part.ratio * Math.pow(part.ratio, lvl), 
-            part.wid * Math.pow(part.ratio, lvl), 
-            part.len, 
+            ref.wid * ref.ratio * Math.pow(ref.ratio, lvl), 
+            ref.wid * Math.pow(ref.ratio, lvl), 
+            ref.len, 
             8
         );
-        // sphere1.geometry = new THREE.SphereGeometry(part.wid * Math.pow(part.ratio, lvl), 8);
-        // sphere2.geometry = new THREE.SphereGeometry(part.wid * part.ratio * Math.pow(part.ratio, lvl), 8);
-        const scale = part.wid / this.wid * Math.pow(this.ratio, lvl);
+        // sphere1.geometry = new THREE.SphereGeometry(ref.wid * Math.pow(ref.ratio, lvl), 8);
+        // sphere2.geometry = new THREE.SphereGeometry(ref.wid * ref.ratio * Math.pow(ref.ratio, lvl), 8);
+        const scale = ref.wid / this.wid * Math.pow(this.ratio, lvl);
         sphere1.scale.set(scale, scale, scale);        
         sphere2.scale.set(scale, scale, scale);
 
         // rearrange primitives within this.obj
-        cylinder.position.set(0, part.len/2, 0);
-        sphere2.position.set(0, part.len, 0);
+        cylinder.position.set(0, ref.len/2, 0);
+        sphere2.position.set(0, ref.len, 0);
 
         // update color
-        this.color = part.color;
+        this.color = ref.color;
 
         // update position and orientation
-        this.position = part.position;
-        this.orientation = part.orientation;
+        this.position = ref.position;
+        this.orientation = ref.orientation;
     }
 }
 
