@@ -1,6 +1,22 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader';
 
+export function getSkybox() {
+    const loader = new THREE.CubeTextureLoader();
+    loader.setPath('../imgs/skybox/');
+
+    const textureCube = loader.load([
+        'px.png',
+        'nx.png',
+        'py.png',
+        'ny.png',
+        'pz.png',
+        'nz.png',
+    ]);
+
+    return textureCube;
+}
+
 export function getGrid() {
     const size = 100;
     const divisions = 100;
