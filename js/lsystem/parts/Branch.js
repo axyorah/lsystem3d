@@ -1,3 +1,7 @@
+import * as THREE from 'three';
+import Part from './Part';
+import { Capsule, makeAxes } from '../../utils';
+
 /**
  * Branch wrapper for a THREE.Object3D with some handy methods.
  * `this.obj` is a THREE.Object3D() with name `branch` and the following structure:
@@ -18,7 +22,7 @@
  *  - in default state branch is oriented 'along' the y-axis
  *  - branch object's (0,0,0) is at the center of its "lower" edge (lower in default state)
  */
-class Branch extends Part {
+export default class Branch extends Part {
     constructor(
         len = 1,
         wid = 0.1,
@@ -215,7 +219,7 @@ class Branch extends Part {
     }
 }
 
-class BranchBuilder {
+export class BranchBuilder {
     constructor() {
         this._len = 1;
         this._wid = 1;

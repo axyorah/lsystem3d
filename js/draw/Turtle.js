@@ -1,4 +1,6 @@
-class Turtle {
+import * as THREE from 'three';
+
+export default class Turtle {
     constructor() {
         // initially turtle is located at the origin and is looking upwards:
         // its 'fwd' axis is along Oy, its 'top' is along Oz and its 'side' is along Ox

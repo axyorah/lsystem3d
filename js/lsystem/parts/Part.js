@@ -1,4 +1,7 @@
-class Part {
+import * as THREE from 'three';
+import { makeAxes } from '../../utils';
+
+export default class Part {
     constructor(
         len = 1,
         wid = 0.5,
@@ -231,7 +234,7 @@ class Part {
     }
 }
 
-class PartBuilder {
+export class PartBuilder {
     constructor() {
         this.wid = 1;
         this.len = 1;

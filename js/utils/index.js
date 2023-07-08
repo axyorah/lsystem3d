@@ -1,4 +1,6 @@
-function makeUnitLine() {
+import * as THREE from 'three';
+
+export function makeUnitLine() {
     // returns red vertical unit line
     const points = [
         new THREE.Vector3(0, -0.5, 0),
@@ -11,19 +13,19 @@ function makeUnitLine() {
     return new THREE.Line(geometry, material);
 }
 
-function makeAxes(visible = false) {
+export function makeAxes(visible = false) {
     // create axes object (THREE.Object3D) containing initial fwd, top and side axes (each is THREE.Line)
     const fwd = makeUnitLine();
     fwd.position.set(0, 1, 0);
     fwd.name = 'fwd';
 
-    const top = this.makeUnitLine();
+    const top = makeUnitLine();
     top.rotateX(Math.PI / 2);
     top.position.set(0, 0.5, 0.5);
     top.material.color.set(0x0000ff);
     top.name = 'top';
 
-    const side = this.makeUnitLine();
+    const side = makeUnitLine();
     side.rotateZ(Math.PI / 2);
     side.position.set(0.5, 0.5, 0);
     side.material.color.set(0x00ff00);
@@ -39,7 +41,7 @@ function makeAxes(visible = false) {
     return axes;
 }
 
-class Capsule {
+export class Capsule {
     constructor(height, width, ratio, color, namePrefix = '') {
         this.height = height || 1;
         this.width = width || 1;
@@ -75,7 +77,7 @@ class Capsule {
     }
 
     _getCylinder() {
-        const cylinderGeo = new THREE.CylinderBufferGeometry(
+        const cylinderGeo = new THREE.CylinderGeometry(
             this.width * this.ratio,
             this.width,
             this.height,
@@ -92,7 +94,7 @@ class Capsule {
     }
 
     _getSphere(diameter, name) {
-        const sphereGeo = new THREE.SphereBufferGeometry(diameter, 8, 8);
+        const sphereGeo = new THREE.SphereGeometry(diameter, 8, 8);
         const sphere = new THREE.Mesh(sphereGeo, this.material);
         sphere.name = `${this.namePrefix}${
             this.namePrefix ? '-' : ''

@@ -1,12 +1,15 @@
-function getGrid() {
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader';
+
+export function getGrid() {
     const size = 100;
     const divisions = 100;
 
     return new THREE.GridHelper(size, divisions, 0x49e6ff, 0x49e6ff);
 }
 
-function addFloatingRocktToScene(scene) {
-    const loader = new THREE.GLTFLoader();
+export function addFloatingRocktToScene(scene) {
+    const loader = new GLTFLoader();
     const textureLoader = new THREE.TextureLoader();
 
     loader.load(

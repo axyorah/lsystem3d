@@ -1,4 +1,7 @@
-class Builder {
+import * as THREE from 'three';
+import Turtle from './Turtle';
+
+export default class Builder {
     constructor() {
         this.turtle = new Turtle();
     }
@@ -66,7 +69,7 @@ class Builder {
         return obj;
     }
 
-    update(lsystem, partMap) {
+    update(lsystem) {
         // (mostly) updates the existing geometry;
         // (when updating branch: new cylinder geometry is added to replace the old one;
         //  this is only done because it's sometimes needed to change cylinder top-to-bottom width ratio...)

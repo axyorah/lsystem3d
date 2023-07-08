@@ -1,3 +1,7 @@
+import * as THREE from 'three';
+import Part from './Part';
+import { makeAxes } from '../../utils';
+
 /**
  * Leaf wrapper for a THREE.Object3D with some handy methods.
  * `this.obj` is a THREE.Object3D() with name `leaf` and the following structure:
@@ -34,7 +38,7 @@
  *             *            -+
  * ```
  */
-class Leaf extends Part {
+export default class Leaf extends Part {
     constructor(
         len = 1.0,
         wid = 0.25,
@@ -230,7 +234,7 @@ class Leaf extends Part {
         return new Leaf(len, wid, dep, col, visibleAxes);
     }
 
-    static copy(part, lvl = 0) {
+    static copy(part) {
         // maybe leafs should also be affected by lvl...
         return new Leaf(
             part.len,
@@ -241,7 +245,7 @@ class Leaf extends Part {
         );
     }
 
-    update(part, lvl = 0) {
+    update(part) {
         // Updates geometry, position and orientation
         this.obj.scale.set(
             part.wid / this.wid,
@@ -258,7 +262,7 @@ class Leaf extends Part {
     }
 }
 
-class LeafBuilder {
+export class LeafBuilder {
     constructor() {
         this._len = 1;
         this._wid = 1;

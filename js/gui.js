@@ -9,7 +9,6 @@ const branchWidLbl = document.querySelector('#branch-width-lbl');
 const branchRatioRng = document.querySelector('#branch-ratio');
 const branchRatioLbl = document.querySelector('#branch-ratio-lbl');
 const branchColor = document.querySelector('#branch-color');
-const branchColorLbl = document.querySelector('#branch-color-lbl');
 
 const leafLenRng = document.querySelector('#leaf-length');
 const leafLenLbl = document.querySelector('#leaf-length-lbl');
@@ -18,7 +17,6 @@ const leafWidLbl = document.querySelector('#leaf-width-lbl');
 const leafDepRng = document.querySelector('#leaf-depth');
 const leafDepLbl = document.querySelector('#leaf-depth-lbl');
 const leafColor = document.querySelector('#leaf-color');
-const leafColorLbl = document.querySelector('#leaf-color-lbl');
 
 const yawRng = document.querySelector('#yaw');
 const yawLbl = document.querySelector('#yaw-lbl');

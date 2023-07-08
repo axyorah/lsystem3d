@@ -1,3 +1,8 @@
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls';
+import LSystem from './lsystem/LSystem';
+import { getGrid } from './ground';
+
 let camera, scene, renderer, cameraControls, skyTexture;
 let lsys;
 const clock = new THREE.Clock();
@@ -44,7 +49,6 @@ function fillScene() {
     // GROUND
     const ground = getGrid();
     scene.add(ground);
-    //addFloatingRocktToScene( scene ); // alternatively place a floating rock underneath the plant
 
     // LSYSTEM
     lsys = new LSystem();
@@ -64,7 +68,7 @@ function setCamera(ratio) {
 }
 
 function setControls() {
-    cameraControls = new THREE.OrbitControls(camera, renderer.domElement);
+    cameraControls = new OrbitControls(camera, renderer.domElement);
     cameraControls.target.set(0, 9, -5);
 }
 

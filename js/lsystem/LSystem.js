@@ -1,4 +1,8 @@
-class LSystem {
+import * as THREE from 'three';
+import { Branch, Leaf } from './parts';
+import { Builder } from '../draw';
+
+export default class LSystem {
     RESERVED_SYMBOLS = '+-^vdb[]X'.split('');
     DEFAULT_AXIOM = '[X]';
     DEFAULT_RULES = {
