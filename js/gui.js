@@ -65,7 +65,6 @@ export class GUI {
     }
 
     next = () => {
-        console.log(this)
         this.lsys.next();
         this.lsys.build();
     }
