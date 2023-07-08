@@ -35,30 +35,9 @@ const rulePopupLbl = document.querySelector('#rule-popup-lbl');
 export class GUI {
     constructor(lsys) {
         this.lsys = lsys;
-
-        this.init.bind(this);
-        this.connect.bind(this);
-
-        this.next.bind(this);
-        this.prev.bind(this);
-        this.reset.bind(this);
-        this.updateBranchLength.bind(this);
-        this.updateBranchWidth.bind(this);
-        this.updateBranchRatio.bind(this);
-        this.updateBranchColor.bind(this);
-        this.updateLeafLength.bind(this);
-        this.updateLeafWidth.bind(this);
-        this.updateLeafDepth.bind(this);
-        this.updateLeafColor.bind(this);
-        this.updateYaw.bind(this);
-        this.updatePitch.bind(this);
-        this.updateRoll.bind(this);
-        this.updateRuleX.bind(this);
-        this.updateRuleF.bind(this);
-        this.updateRuleL.bind(this);
     }
 
-    init() {
+    init = () => {
         // default settings
         const branchLen = parseFloat(branchLenRng.value);
         const branchWid = parseFloat(branchWidRng.value);
@@ -85,22 +64,23 @@ export class GUI {
         this.lsys.roll = roll;
     }
 
-    next() {
+    next = () => {
+        console.log(this)
         this.lsys.next();
         this.lsys.build();
     }
 
-    prev() {
+    prev = () => {
         this.lsys.prev();
         this.lsys.build();
     }
 
-    reset() {
+    reset = () => {
         this.lsys.reset();
         this.lsys.build();
     }
 
-    updateBranchLength() {
+    updateBranchLength = () => {
         // recall: branchWid represents a fraction [0,1] from branchLen
         const val = branchLenRng.value;
         const label = branchLenLbl.innerText.split(':')[0];
@@ -112,7 +92,7 @@ export class GUI {
         this.lsys.update();
     }
 
-    updateBranchWidth() {
+    updateBranchWidth = () => {
         // recall: branchWid represents a fraction [0,1] from branchLen
         const fraction = parseFloat(branchWidRng.value);
         const val = parseFloat(branchLenRng.value) * fraction;
@@ -122,7 +102,7 @@ export class GUI {
         this.lsys.update();
     }
 
-    updateBranchRatio() {
+    updateBranchRatio = () => {
         const val = branchRatioRng.value;
         const label = branchRatioLbl.innerText.split(':')[0];
         branchRatioLbl.innerText = `${label}: ${val}`;
@@ -130,13 +110,13 @@ export class GUI {
         this.lsys.update();
     }
 
-    updateBranchColor() {
+    updateBranchColor = () => {
         const val = branchColor.value;
         this.lsys.map['F'].color = val;
         this.lsys.update();
     }
 
-    updateLeafLength() {
+    updateLeafLength = () => {
         // recall: branchWid represents a fraction [0,1] from branchLen
         const val = leafLenRng.value;
         leafLenLbl.innerText = `${leafLenLbl.innerText.split(':')[0]}: ${val}`;
@@ -144,7 +124,7 @@ export class GUI {
         this.lsys.update();
     }
 
-    updateLeafWidth() {
+    updateLeafWidth = () => {
         // recall: branchWid represents a fraction [0,1] from branchLen
         const val = leafWidRng.value;
         leafWidLbl.innerText = `${leafWidLbl.innerText.split(':')[0]}: ${val}`;
@@ -152,7 +132,7 @@ export class GUI {
         this.lsys.update();
     }
 
-    updateLeafDepth() {
+    updateLeafDepth = () => {
         // recall: branchWid represents a fraction [0,1] from branchLen
         const val = leafDepRng.value;
         leafDepLbl.innerText = `${leafDepLbl.innerText.split(':')[0]}: ${val}`;
@@ -160,34 +140,34 @@ export class GUI {
         this.lsys.update();
     }
 
-    updateLeafColor() {
+    updateLeafColor = () => {
         const val = leafColor.value;
         this.lsys.map['L'].color = val;
         this.lsys.update();
     }
 
-    updateYaw() {
+    updateYaw = () => {
         const val = yawRng.value;
         yawLbl.innerText = `${yawLbl.innerText.split(':')[0]}: ${val}`;
         this.lsys.yaw = parseFloat(val);
         this.lsys.update();
     }
 
-    updatePitch() {
+    updatePitch = () => {
         const val = pitchRng.value;
         pitchLbl.innerText = `${pitchLbl.innerText.split(':')[0]}: ${val}`;
         this.lsys.pitch = parseFloat(val);
         this.lsys.update();
     }
 
-    updateRoll() {
+    updateRoll = () => {
         const val = rollRng.value;
         rollLbl.innerText = `${rollLbl.innerText.split(':')[0]}: ${val}`;
         this.lsys.roll = parseFloat(val);
         this.lsys.update();
     }
 
-    updateRuleX() {
+    updateRuleX = () => {
         const val = ruleXInpt.value;
         this.lsys.rules = { X: val };
 
@@ -196,7 +176,7 @@ export class GUI {
         this.lsys.build();
     }
 
-    updateRuleF() {
+    updateRuleF = () => {
         const val = ruleFInpt.value;
         this.lsys.rules = { F: val };
 
@@ -205,7 +185,7 @@ export class GUI {
         this.lsys.build();
     }
 
-    updateRuleL() {
+    updateRuleL = () => {
         const val = ruleLInpt.value;
         this.lsys.rules = { L: val };
 
@@ -214,7 +194,7 @@ export class GUI {
         this.lsys.build();
     }
 
-    connect() {
+    connect = () => {
         updateBtn.addEventListener('click', this.next);
         restartBtn.addEventListener('click', this.reset);
         undoBtn.addEventListener('click', this.prev);
