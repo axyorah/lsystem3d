@@ -13,17 +13,19 @@
     "author": "axyorah",
     "license": "MIT",
     "dependencies": {
-        "three": "^0.128.0"
+        "three": "^0.154.0"
     },
     "devDependencies": {
         "eslint": "^8.44.0",
         "eslint-config-prettier": "^8.8.0",
         "eslint-plugin-prettier": "^4.2.1",
-        "prettier": "^2.8.8"
+        "prettier": "^2.8.8",
+        "vite": "^4.4.2"
     },
     "eslintConfig": {
         "parserOptions": {
-            "ecmaVersion": 6
+            "ecmaVersion": 6,
+            "sourceType": "module"
         },
         "extends": [
             "eslint:recommended",
