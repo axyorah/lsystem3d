@@ -171,8 +171,9 @@ export class GUI {
         const val = ruleXInpt.value;
         this.lsys.rules = { X: val };
 
-        this.lsys.prev();
-        this.lsys.next();
+        const steps = this.lsys.states.length - 1;
+        Array(steps).fill(0).forEach(() => this.lsys.prev());
+        Array(steps).fill(0).forEach(() => this.lsys.next());
         this.lsys.build();
     }
 
@@ -180,8 +181,9 @@ export class GUI {
         const val = ruleFInpt.value;
         this.lsys.rules = { F: val };
 
-        this.lsys.prev();
-        this.lsys.next();
+        const steps = this.lsys.states.length - 1;
+        Array(steps).fill(0).forEach(() => this.lsys.prev());
+        Array(steps).fill(0).forEach(() => this.lsys.next());
         this.lsys.build();
     }
 
@@ -189,8 +191,9 @@ export class GUI {
         const val = ruleLInpt.value;
         this.lsys.rules = { L: val };
 
-        this.lsys.prev();
-        this.lsys.next();
+        const steps = this.lsys.states.length - 1;
+        Array(steps).fill(0).forEach(() => this.lsys.prev());
+        Array(steps).fill(0).forEach(() => this.lsys.next());
         this.lsys.build();
     }
 
