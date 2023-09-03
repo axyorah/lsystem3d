@@ -83,7 +83,7 @@ export default class LSystem {
     }
 
     reset() {
-        this.axios = this.DEFAULT_AXIOM;
+        this.axiom = this.DEFAULT_AXIOM;
         this.states = [this.DEFAULT_AXIOM];
         this._rules = structuredClone(this.DEFAULT_RULES);
         this.map = Object.fromEntries(
