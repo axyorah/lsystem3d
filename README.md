@@ -4,8 +4,6 @@ Build simple deterministic and context-free L-Systems in 3D:
 
 <img width=500 src="./imgs/lsystem-3d.gif">
 
-Check demo [here](https://sleepy-bastion-18703.herokuapp.com/).
-
 - [L-Systems](#lsystem) 
 - [This Project](#this-project)
 - [Installation](#installation)
@@ -88,4 +86,4 @@ Start dev server: in the project's root directory run:
 $ npm run dev
 ```
 
-In your browser go to `localhost:5173/` and have fun!
+In your browser go to `localhost:5173` and have fun!
