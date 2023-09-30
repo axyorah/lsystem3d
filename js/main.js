@@ -1,34 +1,36 @@
-let camera, scene, renderer, cameraControls, skyTexture;
-let turtle, lsys;
+// imports
+import * as THREE from 'three';
+import LSystem from './lsystem/LSystem';
+import { Setup } from './setup';
+import { GUI } from './gui';
+import { getGrid, getSkybox } from './background';
+
+// DOM
+const container = document.querySelector('#container');
+
+// constants
+const CANVAS_WIDTH = window.innerWidth;
+const CANVAS_HEIGHT = window.innerHeight;
+
+// globals
+let scene;
+const lsys = new LSystem();
 const clock = new THREE.Clock();
-const container = document.querySelector("#container");
-
-function getSkybox() {
-
-    const loader = new THREE.CubeTextureLoader();
-    loader.setPath( '../imgs/skybox/' );
-
-    const textureCube = loader.load( [
-	    'px.png', 'nx.png',
-	    'py.png', 'ny.png',
-	    'pz.png', 'nz.png'
-    ] );
-
-    return textureCube;
-}
+const setup = new Setup(CANVAS_WIDTH, CANVAS_HEIGHT); // setup camera, renderer and cameraControls
+const gui = new GUI(lsys);
 
 function fillScene() {
     scene = new THREE.Scene();
-    scene.fog = new THREE.Fog(0xA030F0, 50, 90);
+    scene.fog = new THREE.Fog(0xa030f0, 50, 90);
 
     // LIGHTS
     const ambientLight = new THREE.AmbientLight(0x555555);
 
-    const light1 = new THREE.DirectionalLight(0xFFFFFF, 1);
+    const light1 = new THREE.DirectionalLight(0xffffff, 1);
     light1.position.set(-500, 0, 500);
     light1.castShadow = true;
 
-    const light2 = new THREE.DirectionalLight(0xFFFFFF, 0.6);
+    const light2 = new THREE.DirectionalLight(0xffffff, 0.6);
     light2.position.set(0, 0, 500);
     light2.castShadow = true;
 
@@ -37,64 +39,30 @@ function fillScene() {
     scene.add(light2);
 
     // SKYBOX
-    scene.background = skyTexture;
+    scene.background = getSkybox();
 
     // GROUND
     const ground = getGrid();
     scene.add(ground);
-    //addFloatingRocktToScene( scene ); // alternatively place a floating rock underneath the plant
 
-    // LSYSTEM + TURTLE
-    turtle = new Turtle();
-    lsys = new LSystem( turtle );
-    scene.add( lsys.obj );
-
-}
-
-function setRenderer(w, h) {
-    renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setSize(w, h);
-    renderer.domElement.setAttribute("id", "renderer");
-    renderer.setClearColorHex;
-}
-
-function setCamera(ratio) {
-    camera = new THREE.PerspectiveCamera(40, ratio, 1, 10000);
-    camera.position.set(0, 7, 40); // 30?
-}
-
-function setControls() {
-    cameraControls = new THREE.OrbitControls(camera, renderer.domElement);
-    cameraControls.target.set(0, 9, -5);
-}
-
-function init() {
-    skyTexture = getSkybox();
-
-    const canvasWidth = window.innerWidth;
-    const canvasHeight = window.innerHeight;
-    const canvasRatio = canvasWidth / canvasHeight;
-
-    setRenderer(canvasWidth, canvasHeight);
-    setCamera(canvasRatio);
-    setControls();
+    // LSYSTEM
+    scene.add(lsys.obj);
 }
 
 function addToDOM() {
     // there should only be one canvas - current renderer.domElement
-    const canvas = container.getElementsByTagName("canvas");
+    const canvas = container.getElementsByTagName('canvas');
     if (canvas.length > 0) {
         container.removeChild(canvas[0]);
     }
-    container.prepend(renderer.domElement); // prepending, so that gui is on top
+    container.prepend(setup.renderer.domElement); // prepending, so that gui is on top
 }
 
 function render() {
-
     let delta = clock.getDelta();
-    cameraControls.update(delta);
+    setup.cameraControls.update(delta);
 
-    renderer.render(scene, camera);
+    setup.renderer.render(scene, setup.camera);
 }
 
 function animate() {
@@ -107,17 +75,19 @@ window.addEventListener('resize', () => {
     const canvasHeight = window.innerHeight;
     const canvasRatio = canvasWidth / canvasHeight;
 
-    camera.aspect = canvasRatio; 
-    camera.updateProjectionMatrix();
-    renderer.setSize(canvasWidth, canvasHeight); 
+    setup.camera.aspect = canvasRatio;
+    setup.camera.updateProjectionMatrix();
+    setup.renderer.setSize(canvasWidth, canvasHeight);
 });
 
 // run all
 function main() {
-    init();      // sets up camera, controls and renderer, as well as preloads all textures
+    // connect gui
+    gui.connect();
+
     fillScene(); // lights and shell are added here
-    addToDOM();  // adds rendered scene back to html
-    animate();   // updates frames when camera changes position or controls are toggled    
+    addToDOM(); // adds rendered scene back to html
+    animate(); // updates frames when camera changes position or controls are toggled
 }
 
 main();

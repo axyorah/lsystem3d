@@ -1,18 +1,51 @@
 {
-  "name": "l-systems-3d",
-  "version": "1.0.0",
-  "description": "L-systems in 3D",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [
-    "l-system",
-    "3d",
-    "threejs"
-  ],
-  "author": "axyorah",
-  "license": "MIT",
-  "dependencies": {
-    "three": "^0.128.0"
-  }
+    "name": "l-systems-3d",
+    "version": "1.0.0",
+    "description": "L-systems in 3D",
+    "scripts": {
+        "dev": "vite"
+    },
+    "keywords": [
+        "l-system",
+        "3d",
+        "threejs"
+    ],
+    "author": "axyorah",
+    "license": "MIT",
+    "dependencies": {
+        "three": "^0.154.0"
+    },
+    "devDependencies": {
+        "eslint": "^8.44.0",
+        "eslint-config-prettier": "^8.8.0",
+        "eslint-plugin-prettier": "^4.2.1",
+        "prettier": "^2.8.8",
+        "vite": "^4.4.2"
+    },
+    "eslintConfig": {
+        "parserOptions": {
+            "ecmaVersion": 6,
+            "sourceType": "module"
+        },
+        "extends": [
+            "eslint:recommended",
+            "plugin:prettier/recommended"
+        ],
+        "plugins": [
+            "prettier"
+        ],
+        "env": {
+            "browser": true,
+            "commonjs": true,
+            "es6": true
+        },
+        "rules": {
+            "semi": "warn",
+            "eqeqeq": "warn"
+        }
+    },
+    "prettier": {
+        "singleQuote": true,
+        "tabWidth": 4
+    }
 }
