@@ -69,8 +69,6 @@ Here's the list of all the allowed symbols and their turtle commands:
 - <code>b</code>: roll clockwise
 
 ## Installation <a name="installation"></a>
-No need to install, just use this [demo](https://sleepy-bastion-18703.herokuapp.com/).
-
 If you want to tinker with the code, follow the instructions below:
 
 Make sure you have [node.js](https://nodejs.org/en/) v10.0.0 or higher.
@@ -85,14 +83,9 @@ Install the dependencies: go to the project's root directory and run:
 $ npm install 
 ```
 
-Install [`http-server`](https://www.npmjs.com/package/http-server):
+Start dev server: in the project's root directory run:
 ```bash
-$ npm install --global http-server
+$ npm run dev
 ```
 
-Start the http server: in the project's root directory run:
-```bash
-$ http-server . -p 8181
-```
-
-In your browser go to `localhost:8181` and have fun!
+In your browser go to `localhost:5173/` and have fun!
